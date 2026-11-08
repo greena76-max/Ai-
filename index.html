@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090e0b">
+<title>MY FAVORITE AI</title>
+<style>
+:root{--bg:#090e0b;--panel:#111a14;--panel2:#17231b;--line:#29392e;--text:#eff8f1;--muted:#9aada0;--green:#62e69a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Inter,system-ui,Arial,sans-serif;height:100dvh;overflow:hidden}
+.app{display:flex;height:100dvh}.sidebar{width:260px;background:#0d1410;border-right:1px solid var(--line);padding:20px 15px;display:flex;flex-direction:column;gap:18px}
+.brand{display:flex;align-items:center;gap:11px;padding:5px 7px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#9affbd,#16844b);display:grid;place-items:center;color:#07150c;font-size:23px;font-weight:900}.brand strong{display:block}.brand small{color:var(--muted);font-size:11px}
+.newchat{border:1px solid #31533e;background:#14251a;color:var(--text);padding:12px 14px;border-radius:12px;text-align:left;cursor:pointer;font-weight:650}.side-label{color:#718477;font-size:11px;text-transform:uppercase;letter-spacing:1.3px;padding:5px 8px}.history{color:var(--muted);font-size:13px;padding:8px;border-radius:9px}.history.active{background:var(--panel2);color:var(--text)}.bottom{margin-top:auto;border-top:1px solid var(--line);padding:14px 8px;color:var(--muted);font-size:12px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}.topbar{height:66px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 25px;background:#0d1410}.status{font-size:12px;color:var(--green);display:flex;align-items:center;gap:7px}.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+.chat{flex:1;overflow:auto;padding:28px 18px 145px}.inner{max-width:820px;margin:auto}
+.welcome{text-align:center;margin:4vh auto 28px}.face-wrap{width:130px;height:130px;margin:0 auto 20px;display:grid;place-items:center;position:relative}.face-glow{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,#4ce88c55,transparent 68%);filter:blur(5px);animation:pulse 2.4s infinite}.robot{width:104px;height:104px;border-radius:34px;background:linear-gradient(145deg,#263e30,#101b14);border:2px solid #64e99a;box-shadow:0 0 28px #39d77a44,inset 0 0 18px #5be58a22;position:relative;z-index:1;animation:float 3s ease-in-out infinite}.robot:before{content:"";position:absolute;top:17px;left:20px;width:60px;height:34px;border-radius:15px;background:#07100b;border:1px solid #416b50}.eyes{position:absolute;top:29px;left:33px;display:flex;gap:20px}.eyes i{width:7px;height:9px;border-radius:50%;background:#8cffb4;box-shadow:0 0 10px #8cffb4}.mouth{position:absolute;left:42px;top:64px;width:20px;height:7px;border-bottom:3px solid #8cffb4;border-radius:0 0 15px 15px}.ear{position:absolute;top:42px;width:9px;height:22px;border-radius:6px;background:#55d98b}.ear.left{left:-7px}.ear.right{right:-7px}.antenna{position:absolute;top:-14px;left:49px;width:3px;height:15px;background:#65e99a}.antenna:after{content:"";position:absolute;top:-5px;left:-4px;width:11px;height:11px;background:#8dffb7;border-radius:50%;box-shadow:0 0 12px #8dffb7}
+.welcome h1{font-size:clamp(27px,4vw,38px);margin:0 0 7px;letter-spacing:-1px}.welcome p{color:var(--muted);margin:0}.suggestions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:25px auto;max-width:650px}.suggestion{background:var(--panel);border:1px solid var(--line);padding:14px;border-radius:13px;color:#c8d8cc;text-align:left;cursor:pointer}.suggestion:hover{border-color:#4b8e63;background:#142119}
+.message{display:flex;gap:12px;margin:20px 0;align-items:flex-start}.avatar{width:34px;height:34px;flex:0 0 34px;border-radius:11px;display:grid;place-items:center;background:#1a2b20;color:var(--green);font-weight:800}.message.user{flex-direction:row-reverse}.message.user .avatar{background:#26352b;color:#eaf5ed}.bubble{max-width:min(78%,680px);padding:12px 15px;border:1px solid var(--line);border-radius:4px 15px 15px 15px;background:var(--panel);white-space:pre-wrap;overflow-wrap:anywhere}.message.user .bubble{background:#173b27;border-color:#28583b;border-radius:15px 4px 15px 15px}
+.composer-wrap{position:absolute;bottom:0;left:0;right:0;padding:22px 18px 15px;background:linear-gradient(transparent,var(--bg) 24%)}.composer{max-width:820px;margin:auto;border:1px solid #34483a;background:#121b15;border-radius:18px;padding:9px;display:flex;align-items:flex-end;gap:8px;box-shadow:0 12px 45px #0006}.composer textarea{flex:1;resize:none;max-height:140px;min-height:42px;border:0;outline:0;background:transparent;color:var(--text);font:inherit;padding:10px 8px}.composer textarea::placeholder{color:#7f9184}.voice,.send{width:42px;height:42px;border:0;border-radius:13px;cursor:pointer;font-size:17px}.voice{background:#203329;color:#a9f4c3}.send{background:var(--green);color:#082012;font-weight:900}.send:disabled{opacity:.45}.disclaimer{text-align:center;color:#738579;font-size:11px;margin:8px auto 0;max-width:820px}
+.menu{display:none;background:none;color:white;border:0;font-size:22px}
+@keyframes pulse{50%{transform:scale(1.13);opacity:.65}}@keyframes float{50%{transform:translateY(-6px)}}
+@media(max-width:700px){.sidebar{position:fixed;z-index:5;inset:0 auto 0 0;width:260px;transform:translateX(-100%);transition:.25s;box-shadow:20px 0 60px #0008}.sidebar.open{transform:translateX(0)}.menu{display:block}.topbar{padding:0 14px}.chat{padding:20px 12px 140px}.welcome{margin-top:4vh}.suggestions{grid-template-columns:1fr}.bubble{max-width:86%}.composer-wrap{padding:16px 11px 11px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+ <div class="brand"><div class="logo">✦</div><div><strong>MY FAVORITE AI</strong><small>Your personal assistant</small></div></div>
+ <button class="newchat" id="newChat">＋ &nbsp; New chat</button>
+ <div><div class="side-label">Workspace</div><div class="history active">✧ &nbsp; New conversation</div><div class="history">◷ &nbsp; Chat history</div></div>
+ <div class="bottom">Your personal AI workspace<br><span style="color:#62e69a">●</span> Interface ready</div>
+</aside>
+<main class="main">
+ <header class="topbar"><div style="display:flex;align-items:center;gap:12px"><button class="menu" id="menu">☰</button><b>Assistant</b></div><div class="status"><span class="dot"></span> Ready to chat</div></header>
+ <section class="chat" id="chat"><div class="inner" id="messages">
+  <div class="welcome" id="welcome">
+   <div class="face-wrap"><div class="face-glow"></div><div class="robot"><span class="antenna"></span><span class="ear left"></span><span class="ear right"></span><span class="eyes"><i></i><i></i></span><span class="mouth"></span></div></div>
+   <h1>Meet your AI assistant</h1><p>Assalam-o-Alaikum! I'm MY FAVORITE AI. How can I help?</p>
+   <div class="suggestions"><button class="suggestion">✧ &nbsp; Explain something simply</button><button class="suggestion">✎ &nbsp; Write a message for me</button><button class="suggestion">⌘ &nbsp; Help me with coding</button><button class="suggestion">☼ &nbsp; Brainstorm an idea</button></div>
+  </div>
+ </div></section>
+ <div class="composer-wrap"><form class="composer" id="form"><textarea id="prompt" rows="1" placeholder="Message MY FAVORITE AI..." aria-label="Message"></textarea><button type="button" class="voice" id="voice" title="Voice input">🎙</button><button class="send" id="send" aria-label="Send">➤</button></form><div class="disclaimer">AI connection is not configured yet. Connect a secure backend to enable real replies.</div></div>
+</main></div>
+<script>
+const API_ENDPOINT='/api/chat'; // Secure backend endpoint. Do not put API keys in this HTML file.
+const messages=document.getElementById('messages'),chat=document.getElementById('chat'),box=document.getElementById('prompt'),send=document.getElementById('send');
+function add(text,role){document.getElementById('welcome')?.remove();let row=document.createElement('div');row.className='message '+role;let av=document.createElement('div');av.className='avatar';av.textContent=role==='user'?'You':'✦';let b=document.createElement('div');b.className='bubble';b.textContent=text;row.append(av,b);messages.append(row);chat.scrollTop=chat.scrollHeight;return b}
+async function ask(text){text=(text||'').trim();if(!text||send.disabled)return;add(text,'user');box.value='';box.style.height='42px';send.disabled=true;let reply=add('Thinking…','assistant');try{let r=await fetch(API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});if(!r.ok)throw Error();let d=await r.json();reply.textContent=d.reply||d.message||'No response received.'}catch(e){reply.textContent='The design is ready, but the AI service is not connected yet. A secure backend is required at /api/chat. Keep your API secret on the server, never in this HTML or public GitHub repository.'}finally{send.disabled=false;box.focus();chat.scrollTop=chat.scrollHeight}}
+document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();ask(box.value)});box.addEventListener('input',()=>{box.style.height='42px';box.style.height=Math.min(box.scrollHeight,140)+'px'});box.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask(box.value)}});
+document.querySelectorAll('.suggestion').forEach(b=>b.addEventListener('click',()=>{box.value=b.textContent.replace(/^[✧✎⌘☼]\s*/,'').trim();ask(box.value)}));
+document.getElementById('newChat').addEventListener('click',()=>{messages.innerHTML='';let w=document.createElement('div');w.className='welcome';w.id='welcome';w.innerHTML='<div class="face-wrap"><div class="face-glow"></div><div class="robot"><span class="antenna"></span><span class="ear left"></span><span class="ear right"></span><span class="eyes"><i></i><i></i></span><span class="mouth"></span></div></div><h1>Meet your AI assistant</h1><p>Assalam-o-Alaikum! I\\'m MY FAVORITE AI. How can I help?</p>';messages.append(w);document.getElementById('sidebar').classList.remove('open')});
+document.getElementById('menu').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+document.getElementById('voice').addEventListener('click',()=>{if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){alert('Voice input is not supported in this browser.');return}const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=new SR();rec.lang='ur-PK';rec.onresult=e=>{box.value=e.results[0][0].transcript;box.focus()};rec.start()});
+</script>
+</body></html>
