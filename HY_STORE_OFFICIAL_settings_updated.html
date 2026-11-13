@@ -1,0 +1,2445 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HY STORE OFFICIAL - Full Working App &amp; Code Export</title>
+    <!-- Google Identity Services (GIS) for Real Google Account Picker -->
+    <script src="https://accounts.google.com/gsi/client" async="" defer=""></script>
+    <style>
+        :root {
+            --bg-white: #FFFFFF;
+            --bg-surface: #F5F7FA;
+            --primary-red: #E50914;
+            --primary-red-light: #FFF0F1;
+            --primary-blue: #1D4ED8;
+            --primary-blue-light: #EFF6FF;
+            --dark-black: #0B0B0B;
+            --text-main: #1A1A1A;
+            --text-muted: #666666;
+            --border-light: #E2E8F0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-surface);
+            color: var(--text-main);
+            padding-bottom: 85px;
+        }
+
+
+        body.dark-theme {
+            --bg-white:#171A21; --bg-surface:#0F1117; --text-main:#F3F4F6;
+            --text-muted:#A1A1AA; --border-light:#343946; --dark-black:#F9FAFB;
+            --primary-blue-light:#172554; --primary-red-light:#3B1519;
+        }
+        body.dark-theme .form-card, body.dark-theme .product-card,
+        body.dark-theme .cart-item, body.dark-theme .modal-content,
+        body.dark-theme .subpage-header, body.dark-theme .bottom-nav,
+        body.dark-theme .payment-choice, body.dark-theme input,
+        body.dark-theme select, body.dark-theme textarea {
+            background-color:#191D27 !important; color:var(--text-main) !important;
+            border-color:var(--border-light) !important;
+        }
+        body.dark-theme input::placeholder, body.dark-theme textarea::placeholder {color:#8B93A3;}
+        body.compact-ui .form-card {padding:11px !important; margin-bottom:9px !important;}
+        body.compact-ui .page-container {padding-left:10px !important; padding-right:10px !important;}
+        body.compact-ui .subpage-header {padding-top:10px !important; padding-bottom:10px !important;}
+        body.compact-ui button {padding-top:8px !important; padding-bottom:8px !important;}
+
+        .icon-svg {
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            display: block;
+        }
+
+        .icon-sm {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .icon-lg {
+            width: 46px;
+            height: 46px;
+            stroke: var(--dark-black);
+            stroke-width: 1.3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .app-page {
+            display: none;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        .app-page.active-page {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0.4; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .app-header {
+            background-color: var(--bg-white);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: 0 3px 12px rgba(29, 78, 216, 0.08);
+        }
+
+        .user-top-bar {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #1E40AF 100%);
+            padding: 13px 14px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+
+        .search-area-wrap {
+            background-color: var(--bg-white);
+            padding: 10px 14px 12px;
+        }
+
+        .user-profile-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dp-wrapper {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #FFFFFF;
+            padding: 1px;
+            cursor: pointer;
+            background: #FFFFFF;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .dp-wrapper img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .dp-edit-badge {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 17px;
+            height: 17px;
+            background: var(--primary-blue);
+            color: white;
+            border-radius: 50%;
+            border: 1.5px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .greeting-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .greeting-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .greeting-sub {
+            font-size: 11px;
+            color: #DBEAFE;
+            font-weight: 600;
+        }
+
+        .header-right-icons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-icon-btn {
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+        }
+
+        .bell-dot {
+            position: absolute;
+            bottom: 4px;
+            width: 8px;
+            height: 2.5px;
+            border-radius: 4px;
+            background-color: #93C5FD;
+        }
+
+        .notif-count-badge {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            background: var(--primary-blue);
+            color: white;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 1px 5px;
+            border-radius: 8px;
+            border: 1px solid #FFFFFF;
+        }
+
+        .logout-icon-btn {
+            color: #FFFFFF;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            border: 1.5px solid var(--primary-blue);
+            border-radius: 24px;
+            padding: 3px 4px 3px 8px;
+            background-color: var(--bg-white);
+            box-shadow: 0 2px 6px rgba(29, 78, 216, 0.08);
+        }
+
+        .img-search-btn {
+            background-color: var(--primary-blue-light);
+            color: var(--primary-blue);
+            border: 1px solid #BFDBFE;
+            border-radius: 16px;
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 6px 8px;
+            font-size: 13px;
+            color: var(--text-main);
+            min-width: 70px;
+            background: transparent;
+        }
+
+        .mic-btn {
+            background: none;
+            border: none;
+            padding: 0 8px;
+            cursor: pointer;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+        }
+
+        .search-submit-btn {
+            background: linear-gradient(135deg, var(--primary-red), #B91C1C);
+            color: var(--bg-white);
+            border: none;
+            border-radius: 20px;
+            padding: 7px 15px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 12px 12px 6px;
+            background-color: var(--bg-white);
+        }
+
+        .action-card {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            padding: 10px 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .action-card:active { background-color: var(--primary-blue-light); border-color: var(--primary-blue); }
+
+        .action-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background-color: var(--primary-blue-light);
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .action-card:nth-child(2) .action-icon {
+            background-color: var(--primary-red-light);
+            color: var(--primary-red);
+        }
+
+        .action-text {
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.25;
+            color: var(--dark-black);
+        }
+
+        .trust-banner-wrap {
+            background-color: var(--bg-white);
+            padding: 6px 12px 12px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .trust-banner {
+            background: linear-gradient(135deg, #FAD2D4 0%, #BFDBFE 100%);
+            border: 1px solid #60A5FA;
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 48%;
+            color: var(--dark-black);
+        }
+
+        .trust-item:first-child svg { color: #DC2626; }
+        .trust-item:last-child svg { color: #1D4ED8; }
+
+        .trust-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--dark-black);
+        }
+
+        .trust-sub {
+            font-size: 10px;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .trust-divider {
+            width: 1px;
+            height: 24px;
+            background-color: #93C5FD;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            padding: 10px 12px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .filter-bar::-webkit-scrollbar { display: none; }
+
+        .chip {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 18px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-main);
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .chip.active {
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
+            border-color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 0 12px;
+        }
+
+        .product-card {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .badge-tag {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background-color: var(--primary-red);
+            color: var(--bg-white);
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            z-index: 2;
+        }
+
+        .badge-tag.blue {
+            background-color: var(--primary-blue);
+        }
+
+        .product-img-box {
+            width: 100%;
+            height: 155px;
+            background-color: #FAFAFA;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+        }
+
+        .lens-btn {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            width: 26px;
+            height: 26px;
+            background: var(--bg-white);
+            border: 1px solid #BFDBFE;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+        }
+
+        .save-card-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 28px;
+            height: 28px;
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            z-index: 3;
+        }
+        .save-card-btn.saved {
+            color: var(--primary-red);
+            border-color: var(--primary-red);
+        }
+        .save-card-btn.saved svg {
+            fill: var(--primary-red);
+        }
+
+        .product-details {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            justify-content: space-between;
+        }
+
+        .product-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+            line-height: 1.35;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
+        }
+
+        .product-price {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary-red);
+        }
+
+        .moq-text {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        .quick-add-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-blue);
+            color: var(--bg-white);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .subpage-header {
+            background: var(--bg-white);
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .back-btn {
+            background: var(--primary-blue-light);
+            border: 1px solid #BFDBFE;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--primary-blue);
+        }
+
+        .subpage-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--dark-black);
+        }
+
+        .page-container {
+            padding: 14px;
+        }
+
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .cat-box {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 18px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .cat-box:active { border-color: var(--primary-blue); }
+
+        .cat-icon-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--primary-blue-light);
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cat-box:nth-child(even) .cat-icon-circle {
+            background: var(--primary-red-light);
+            color: var(--primary-red);
+        }
+
+        .detail-preview-box {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            height: 240px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+
+        .uploaded-preview-img {
+            max-width: 140px;
+            max-height: 140px;
+            border-radius: 8px;
+            border: 2px dashed var(--primary-blue);
+            object-fit: cover;
+            display: none;
+            margin-top: 8px;
+        }
+
+        .form-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--dark-black);
+        }
+
+        .text-field {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+        .text-field:focus { border-color: var(--primary-blue); }
+
+        .primary-btn {
+            width: 100%;
+            background: var(--primary-red);
+            color: var(--bg-white);
+            border: none;
+            padding: 13px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .blue-btn {
+            width: 100%;
+            background: var(--primary-blue);
+            color: var(--bg-white);
+            border: none;
+            padding: 13px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .outline-btn {
+            width: 100%;
+            background: var(--primary-blue-light);
+            color: var(--primary-blue);
+            border: 1.5px solid var(--primary-blue);
+            padding: 11px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .google-login-btn {
+            width: 100%;
+            background: #FFFFFF;
+            color: #1F2937;
+            border: 1.5px solid var(--primary-blue);
+            padding: 12px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px rgba(29, 78, 216, 0.12);
+            margin-bottom: 10px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 11, 11, 0.6);
+            z-index: 400;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal-sheet {
+            background: var(--bg-white);
+            width: 100%;
+            max-width: 480px;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 18px 16px 26px;
+            animation: slideUp 0.25s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .account-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .account-row:active {
+            background: var(--primary-blue-light);
+            border-color: var(--primary-blue);
+        }
+
+        .account-row img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .cart-item-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .qty-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-surface);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .profile-banner {
+            background: linear-gradient(135deg, var(--dark-black) 0%, #1E3A8A 100%);
+            color: var(--bg-white);
+            border-radius: 14px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .avatar-circle {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: var(--primary-red);
+            border: 2px solid #93C5FD;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .avatar-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .order-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .status-pill {
+            background: var(--primary-blue-light);
+            color: var(--primary-blue);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark-black);
+            color: var(--bg-white);
+            padding: 9px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 500;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            white-space: nowrap;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--bg-white);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 12px;
+            z-index: 150;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            position: relative;
+            width: 20%;
+        }
+
+        .nav-item.active {
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -3px;
+            right: 18px;
+            background-color: var(--primary-red);
+            color: var(--bg-white);
+            font-size: 9px;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 10px;
+            border: 1.5px solid var(--bg-white);
+        }
+
+        .payment-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+        .payment-choice{display:flex;align-items:flex-start;gap:8px;border:1px solid var(--border-light);border-radius:10px;padding:11px 9px;cursor:pointer;font-size:12px}
+        .payment-choice:has(input:checked){border:2px solid var(--primary-blue);background:var(--primary-blue-light)}
+        .payment-choice input{margin-top:2px;accent-color:var(--primary-blue)}
+        .payment-choice span{display:flex;flex-direction:column;gap:4px}
+        .payment-choice small{font-size:10px;color:var(--text-muted);line-height:1.3}
+        .payment-account-box{background:var(--primary-blue-light);border:1px solid #BFDBFE;border-radius:10px;padding:12px;margin-bottom:12px;font-size:12px}
+        .payment-number{font-size:20px;font-weight:900;letter-spacing:1px;color:var(--primary-blue);margin:5px 0}
+        .success-overlay{position:fixed;inset:0;background:rgba(5,15,35,.78);z-index:700;display:none;align-items:center;justify-content:center;padding:20px}
+        .success-panel{background:#fff;border-radius:18px;padding:26px 20px;text-align:center;width:100%;max-width:360px}
+        .success-mark{width:64px;height:64px;border-radius:50%;background:#DCFCE7;color:#15803D;display:grid;place-items:center;font-size:34px;margin:0 auto 14px}
+        .gesture-bar {
+            position: fixed;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: 4px;
+            background-color: #888888;
+            border-radius: 4px;
+            z-index: 160;
+            pointer-events: none;
+        }
+
+        .floating-ai-btn {
+            position: fixed;
+            bottom: 78px;
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #FF5722 0%, #E50914 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            box-shadow: 0 3px 12px rgba(229, 9, 20, 0.35);
+            cursor: pointer;
+            z-index: 200;
+            border: 2px solid #FFFFFF;
+            transition: transform 0.2s ease;
+        }
+        .floating-ai-btn:active {
+            transform: scale(0.92);
+        }
+    </style>
+<style id="googleidentityservice_button_styles">.qJTHM{-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;color:#202124;direction:ltr;-webkit-touch-callout:none;font-family:Roboto-Regular,arial,sans-serif;-webkit-font-smoothing:antialiased;font-weight:400;margin:0;overflow:hidden;-webkit-text-size-adjust:100%}.ynRLnc{left:-9999px;position:absolute;top:-9999px}.L6cTce{display:none}.bltWBb{overflow-wrap:break-word;word-break:break-word}.hSRGPd{color:#1a73e8;cursor:pointer;font-weight:500;text-decoration:none}.Bz112c-W3lGp{height:16px;width:16px}.Bz112c-E3DyYd{height:20px;width:20px}.Bz112c-r9oPif{height:24px;width:24px}.Bz112c-u2z5K{height:36px;width:36px}.Bz112c-uaxL4e{border-radius:10px}.LgbsSe-Bz112c{display:block}.S9gUrf-YoZ4jf{border:none;margin:0;padding:0}.S9gUrf-YoZ4jf *{border:none;margin:0;padding:0}.fFW7wc-ibnC6b>.aZ2wEe>div{border-color:#4285f4}.P1ekSe-ZMv3u{-webkit-transition:height .2s linear;transition:height .2s linear}.P1ekSe-ZMv3u>div:first-child{background-color:#1a73e8!important;-webkit-transition:width .3s linear;transition:width .3s linear}.P1ekSe-ZMv3u>div:nth-child(2){background-image:-webkit-gradient(linear,left top,right top,from(rgba(255,255,255,.7)),to(rgba(255,255,255,.7))),-webkit-gradient(linear,left top,right top,from(#1a73e8),to(#1a73e8))!important;background-image:-webkit-linear-gradient(left,rgba(255,255,255,.7),rgba(255,255,255,.7)),-webkit-linear-gradient(left,#1a73e8,#1a73e8)!important;background-image:linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(90deg,#1a73e8,#1a73e8)!important}.P1ekSe-ZMv3u>div:nth-child(3){background-image:-webkit-gradient(linear,left top,right top,from(rgba(255,255,255,.7)),to(rgba(255,255,255,.7))),-webkit-gradient(linear,left top,right top,from(#1a73e8),to(#1a73e8))!important;background-image:-webkit-linear-gradient(left,rgba(255,255,255,.7),rgba(255,255,255,.7)),-webkit-linear-gradient(left,#1a73e8,#1a73e8)!important;background-image:linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(90deg,#1a73e8,#1a73e8)!important}.haAclf{display:inline-block}.nsm7Bb-HzV7m-LgbsSe{border-radius:4px;box-sizing:border-box;-webkit-transition:background-color .218s,border-color .218s;transition:background-color .218s,border-color .218s;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;-webkit-appearance:none;background-color:#fff;background-image:none;border:1px solid #dadce0;color:#3c4043;cursor:pointer;font-family:Google Sans,arial,sans-serif;font-size:.875rem;height:40px;letter-spacing:.25px;outline:none;overflow:hidden;padding:0 12px;position:relative;text-align:center;vertical-align:middle;white-space:nowrap;width:auto}.nsm7Bb-HzV7m-LgbsSe.TzA9Ye-LgbsSe{font-size:14px}@media screen and (-ms-high-contrast:active){.nsm7Bb-HzV7m-LgbsSe{border:2px solid windowText;color:windowText}}@media screen and (preferes-contrast:more){.nsm7Bb-HzV7m-LgbsSe{color:#000}}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe{font-size:.875rem;height:32px;letter-spacing:.25px;padding:0 10px}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe.TzA9Ye-LgbsSe{font-size:14px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe{font-size:.6875rem;height:20px;letter-spacing:.3px;padding:0 8px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe.TzA9Ye-LgbsSe{font-size:11px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe{padding:0;width:40px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.pSzOP-SxQuSe{width:32px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.purZT-SxQuSe{width:20px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK{border-radius:20px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK.pSzOP-SxQuSe{border-radius:16px}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK.purZT-SxQuSe{border-radius:10px}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc{border:1px solid #8e918f;background-color:#131314;color:#e3e3e3}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc{border:none;color:#fff}.nsm7Bb-HzV7m-LgbsSe.MFS4be-v3pZbf-Ia7Qfc{background-color:#1a73e8}.nsm7Bb-HzV7m-LgbsSe.MFS4be-JaPV2b-Ia7Qfc{background-color:#202124;color:#e8eaed}@media screen and (prefers-contrast:more){.nsm7Bb-HzV7m-LgbsSe.MFS4be-JaPV2b-Ia7Qfc{color:#fff}}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:18px;margin-right:8px;min-width:18px;width:18px}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:14px;min-width:14px;width:14px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{height:10px;min-width:10px;width:10px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin-left:8px;margin-right:-4px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin:0;padding:10px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{padding:8px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c{padding:4px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-top-left-radius:3px;border-bottom-left-radius:3px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;align-items:center;background-color:#fff;height:36px;margin-left:-10px;margin-right:12px;min-width:36px;width:36px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf .nsm7Bb-HzV7m-LgbsSe-Bz112c,.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf .nsm7Bb-HzV7m-LgbsSe-Bz112c{margin:0;padding:0}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{height:28px;margin-left:-8px;margin-right:10px;min-width:28px;width:28px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{height:16px;margin-left:-6px;margin-right:8px;min-width:16px;width:16px}.nsm7Bb-HzV7m-LgbsSe.Bz112c-LgbsSe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:3px;margin-left:2px;margin-right:0;padding:0}.nsm7Bb-HzV7m-LgbsSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:18px}.nsm7Bb-HzV7m-LgbsSe.pSzOP-SxQuSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:14px}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:8px}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-bN97Pc-sM5MNb{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;-webkit-box-align:center;align-items:center;-webkit-flex-direction:row;-webkit-box-orient:horizontal;-webkit-box-direction:normal;flex-direction:row;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;-webkit-flex-wrap:nowrap;flex-wrap:nowrap;height:100%;position:relative;width:100%}.nsm7Bb-HzV7m-LgbsSe .oXtfBe-l4eHX{-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-BPrWId{-webkit-flex-grow:1;-webkit-box-flex:1;flex-grow:1;font-family:Google Sans,arial,sans-serif;font-weight:500;overflow:hidden;text-overflow:ellipsis;vertical-align:top}.nsm7Bb-HzV7m-LgbsSe.purZT-SxQuSe .nsm7Bb-HzV7m-LgbsSe-BPrWId{font-weight:300}.nsm7Bb-HzV7m-LgbsSe .oXtfBe-l4eHX .nsm7Bb-HzV7m-LgbsSe-BPrWId{-webkit-flex-grow:0;-webkit-box-flex:0;flex-grow:0}.nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-MJoBVe{-webkit-transition:background-color .218s;transition:background-color .218s;bottom:0;left:0;position:absolute;right:0;top:0}.nsm7Bb-HzV7m-LgbsSe:focus,.nsm7Bb-HzV7m-LgbsSe:hover{box-shadow:none;border-color:rgb(210,227,252);outline:none}.nsm7Bb-HzV7m-LgbsSe:focus-within{outline:2px solid #00639b;border-color:transparent}.nsm7Bb-HzV7m-LgbsSe:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(66,133,244,.08)}.nsm7Bb-HzV7m-LgbsSe:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(66,133,244,.1)}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.08)}.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe.i5vt6e-to915-Ia7Qfc:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.12)}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:hover .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.24)}.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:active .nsm7Bb-HzV7m-LgbsSe-MJoBVe,.nsm7Bb-HzV7m-LgbsSe.MFS4be-Ia7Qfc:focus .nsm7Bb-HzV7m-LgbsSe-MJoBVe{background:rgba(255,255,255,.32)}.nsm7Bb-HzV7m-LgbsSe .n1UuX-DkfjY{border-radius:50%;display:-webkit-box;display:-webkit-flex;display:flex;height:20px;margin-left:-4px;margin-right:8px;min-width:20px;width:20px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId{font-family:Roboto;font-size:12px;text-align:left}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff .fmcmS,.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .ssJRIf{overflow:hidden;text-overflow:ellipsis}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;-webkit-box-align:center;align-items:center;color:#5f6368;fill:#5f6368;font-size:11px;font-weight:400}.nsm7Bb-HzV7m-LgbsSe.jVeSEe.i5vt6e-to915-Ia7Qfc .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{color:#c4c7c5;fill:#c4c7c5}.nsm7Bb-HzV7m-LgbsSe.jVeSEe.MFS4be-Ia7Qfc .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{color:#e8eaed;fill:#e8eaed}@media screen and (prefers-contrast:more){.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff,.nsm7Bb-HzV7m-LgbsSe.jVeSEe.MFS4be-Ia7Qfc .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff{color:#000;fill:#000}}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-BPrWId .K4efff .Bz112c{height:18px;margin:-3px -3px -3px 2px;min-width:18px;width:18px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-top-left-radius:0;border-bottom-left-radius:0;border-top-right-radius:3px;border-bottom-right-radius:3px;margin-left:12px;margin-right:-10px}.nsm7Bb-HzV7m-LgbsSe.jVeSEe.JGcpL-RbRzK .nsm7Bb-HzV7m-LgbsSe-Bz112c-haAclf{border-radius:18px}.L5Fo6c-sM5MNb{border:0;display:block;left:0;position:relative;top:0}.L5Fo6c-bF1uUb{border-radius:4px;bottom:0;cursor:pointer;left:0;position:absolute;right:0;top:0}.L5Fo6c-bF1uUb:focus{border:none;outline:none}sentinel{}</style></head>
+<body>
+
+    <input type="file" id="dp-file-input" accept="image/*" style="display:none;" onchange="changeUserDP(event)">
+    <div class="toast" id="app-toast" style="display: none;">Listening... Speak now 🎙️</div>
+
+    <!-- Google Account Picker Modal -->
+    <div class="modal-overlay" id="google-picker-modal" onclick="closeGoogleModal(event)">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"></path><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"></path><path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"></path><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"></path></svg>
+                    <span style="font-weight:800; font-size:15px;">Choose a Google Account</span>
+                </div>
+                <button onclick="document.getElementById('google-picker-modal').style.display='none'" style="background:none; border:none; font-size:18px; color:#666; cursor:pointer;">×</button>
+            </div>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Select an email from your phone to sign in and sync your DP &amp; orders:</p>
+            <div id="device-accounts-list"></div>
+            <div style="border-top:1px solid var(--border-light); padding-top:10px; margin-top:6px;">
+                <input type="email" id="custom-gmail-input" class="text-field" placeholder="Or type another Gmail (e.g. name@gmail.com)" style="margin-bottom:8px;">
+                <button class="blue-btn" onclick="loginWithCustomGmail()">Continue with Email</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Modal -->
+    <div class="modal-overlay" id="notif-modal" onclick="if(event.target===this)this.style.display='none'">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-weight:800; font-size:16px; color:var(--dark-black);">Notifications</span>
+                <button onclick="document.getElementById('notif-modal').style.display='none'" style="background:none; border:none; color:var(--primary-blue); font-weight:700; font-size:12px; cursor:pointer;">Close</button>
+            </div>
+            <div id="notif-list">
+                <div class="order-card" style="border-left:3px solid var(--primary-blue);">
+                    <div style="font-weight:700; font-size:13px;">Welcome Offer Unlocked</div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Enjoy FREE shipping on your first customized mug or LED frame order!</div>
+                </div>
+                <div class="order-card" style="border-left:3px solid var(--primary-red);">
+                    <div style="font-weight:700; font-size:13px;">20% Flash Sale Live</div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Magic Photo Mugs &amp; Acrylic Glow Frames are on limited discount.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="success-overlay" id="order-success-overlay">
+        <div class="success-panel">
+            <div style="font-size:20px;font-weight:900;color:var(--primary-blue);margin-bottom:12px;">HY STORE</div>
+            <div class="success-mark">✓</div>
+            <div style="font-size:18px;font-weight:900;margin-bottom:8px;">Congratulations!</div>
+            <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Your order has been placed successfully.</div>
+            <div style="background:var(--bg-surface);border-radius:10px;padding:12px;margin-bottom:16px;">
+                <div style="font-size:11px;color:var(--text-muted);">Your Tracking ID</div>
+                <div id="success-tracking-id" style="font-size:18px;font-weight:900;color:var(--primary-blue);">HY-000000</div>
+            </div>
+            <button class="primary-btn" onclick="closeOrderSuccess()">View My Orders</button>
+        </div>
+    </div>
+
+    <!-- PAGE 1: HOME -->
+    <div id="page-home" class="app-page">
+        <header class="app-header">
+            <div class="user-top-bar">
+                <div class="user-profile-left">
+                    <div class="dp-wrapper" onclick="triggerDPChange()" title="Tap to change profile photo">
+                        <img id="header-user-dp" src="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;rect width='100' height='100' fill='%23EFF6FF'/&gt;&lt;circle cx='50' cy='38' r='18' fill='%231D4ED8'/&gt;&lt;path d='M20 88 C20 66, 80 66, 80 88' fill='%231D4ED8'/&gt;&lt;/svg&gt;" alt="User DP">
+                        <div class="dp-edit-badge">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="greeting-block" onclick="handleHeaderGreetingClick()" style="cursor:pointer;">
+                        <div class="greeting-title" id="header-greeting-text">Hey There 👋</div>
+                        <div class="greeting-sub" id="header-sub-status">Tap to Login with Google</div>
+                    </div>
+                </div>
+                <div class="header-right-icons">
+                    <button class="header-icon-btn" onclick="openNotifications()" aria-label="Notifications">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="bell-dot"></span>
+                        <span class="notif-count-badge" id="notif-badge">2</span>
+                    </button>
+                    <button class="header-icon-btn logout-icon-btn" onclick="handleAuthAction()" aria-label="Account Login/Logout">
+                        <svg class="icon-svg" viewBox="0 0 24 24">
+                            <path stroke="#FFFFFF" d="M15 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8"></path>
+                            <polyline stroke="#FFFFFF" points="16 17 21 12 16 7"></polyline>
+                            <line stroke="#FFFFFF" x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="search-area-wrap">
+                <div class="search-container">
+                    <button class="img-search-btn" onclick="openCameraSearch()">
+                        <svg class="icon-sm" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                        Photo
+                    </button>
+                    <input type="text" class="search-input" id="search-box" placeholder="Search mugs, frames..." onkeyup="searchProducts()">
+                    <button class="mic-btn" onclick="simulateVoiceSearch()">
+                        <svg class="icon-sm" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                    </button>
+                    <button class="search-submit-btn" onclick="searchProducts()">Search</button>
+                </div>
+            </div>
+        </header>
+
+        <section class="quick-actions">
+            <div class="action-card" onclick="openProductDetail(1)">
+                <div class="action-icon">
+                    <svg class="icon-sm" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                </div>
+                <div class="action-text">Design<br>Your Mug</div>
+            </div>
+            <div class="action-card" onclick="navigateTo('page-quote')">
+                <div class="action-icon">
+                    <svg class="icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                </div>
+                <div class="action-text">Request<br>Quote</div>
+            </div>
+            <div class="action-card" onclick="filterItems('Deals')">
+                <div class="action-icon">
+                    <svg class="icon-sm" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+                </div>
+                <div class="action-text">Top<br>Ranking</div>
+            </div>
+        </section>
+
+        <section class="trust-banner-wrap">
+            <div class="trust-banner">
+                <div class="trust-item">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    <div>
+                        <div class="trust-title">FREE shipping</div>
+                        <div class="trust-sub">on your first order</div>
+                    </div>
+                </div>
+                <div class="trust-divider"></div>
+                <div class="trust-item">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                    <div>
+                        <div class="trust-title">Safe Printing</div>
+                        <div class="trust-sub">Breakage replacement</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="filter-bar">
+            <div class="chip active" onclick="filterItems('All', this)">All</div>
+            <div class="chip" onclick="filterItems('SALE', this)">SALE</div>
+            <div class="chip" onclick="filterItems('Deals', this)">Top Deals</div>
+            <div class="chip" onclick="filterItems('Mugs', this)">Magic Mugs</div>
+            <div class="chip" onclick="filterItems('Frames', this)">LED Frames</div>
+        </section>
+
+        <main class="product-grid" id="product-feed">
+                <div class="product-card">
+                    <div class="badge-tag">LIVE</div>
+                    <button class="save-card-btn " onclick="toggleSave(1)">
+                        <svg class="icon-sm" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    </button>
+                    <div class="product-img-box" onclick="openProductDetail(1)">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>
+                        <div class="lens-btn">
+                            <svg class="icon-sm" style="width:13px;height:13px;" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title" onclick="openProductDetail(1)">Heat Sensitive Magic Photo Mug (Black Matte)</div>
+                        <div class="price-row">
+                            <div>
+                                <div class="product-price">PKR 1,150</div>
+                                <div class="moq-text">MOQ: 1 piece</div>
+                            </div>
+                            <button class="quick-add-btn" onclick="addToCart(1)">
+                                <svg class="icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="product-card">
+                    <div class="badge-tag blue">HOT</div>
+                    <button class="save-card-btn " onclick="toggleSave(2)">
+                        <svg class="icon-sm" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    </button>
+                    <div class="product-img-box" onclick="openProductDetail(2)">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <div class="lens-btn">
+                            <svg class="icon-sm" style="width:13px;height:13px;" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title" onclick="openProductDetail(2)">Personalized Acrylic LED Couple Glow Frame</div>
+                        <div class="price-row">
+                            <div>
+                                <div class="product-price">PKR 2,450</div>
+                                <div class="moq-text">MOQ: 1 piece</div>
+                            </div>
+                            <button class="quick-add-btn" onclick="addToCart(2)">
+                                <svg class="icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="product-card">
+                    <div class="badge-tag">-20%</div>
+                    <button class="save-card-btn " onclick="toggleSave(3)">
+                        <svg class="icon-sm" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    </button>
+                    <div class="product-img-box" onclick="openProductDetail(3)">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+                        <div class="lens-btn">
+                            <svg class="icon-sm" style="width:13px;height:13px;" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title" onclick="openProductDetail(3)">Sublimation White Ceramic Gift Mug + Box</div>
+                        <div class="price-row">
+                            <div>
+                                <div class="product-price">PKR 790</div>
+                                <div class="moq-text">MOQ: 1 piece</div>
+                            </div>
+                            <button class="quick-add-btn" onclick="addToCart(3)">
+                                <svg class="icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="product-card">
+                    
+                    <button class="save-card-btn " onclick="toggleSave(4)">
+                        <svg class="icon-sm" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    </button>
+                    <div class="product-img-box" onclick="openProductDetail(4)">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>
+                        <div class="lens-btn">
+                            <svg class="icon-sm" style="width:13px;height:13px;" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title" onclick="openProductDetail(4)">Heart Handle Inner Red Custom Printed Mug</div>
+                        <div class="price-row">
+                            <div>
+                                <div class="product-price">PKR 1,050</div>
+                                <div class="moq-text">MOQ: 1 piece</div>
+                            </div>
+                            <button class="quick-add-btn" onclick="addToCart(4)">
+                                <svg class="icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="product-card">
+                    <div class="badge-tag blue">NEW</div>
+                    <button class="save-card-btn " onclick="toggleSave(5)">
+                        <svg class="icon-sm" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    </button>
+                    <div class="product-img-box" onclick="openProductDetail(5)">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <div class="lens-btn">
+                            <svg class="icon-sm" style="width:13px;height:13px;" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title" onclick="openProductDetail(5)">Wooden Rotating Photo Cube Lamp Frame</div>
+                        <div class="price-row">
+                            <div>
+                                <div class="product-price">PKR 3,200</div>
+                                <div class="moq-text">MOQ: 1 piece</div>
+                            </div>
+                            <button class="quick-add-btn" onclick="addToCart(5)">
+                                <svg class="icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="product-card">
+                    <div class="badge-tag blue">BULK</div>
+                    <button class="save-card-btn " onclick="toggleSave(6)">
+                        <svg class="icon-sm" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    </button>
+                    <div class="product-img-box" onclick="openProductDetail(6)">
+                        <svg class="icon-lg" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        <div class="lens-btn">
+                            <svg class="icon-sm" style="width:13px;height:13px;" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title" onclick="openProductDetail(6)">Wholesale Plain Sublimation Mugs (Box of 36)</div>
+                        <div class="price-row">
+                            <div>
+                                <div class="product-price">PKR 280</div>
+                                <div class="moq-text">MOQ: 36 pieces</div>
+                            </div>
+                            <button class="quick-add-btn" onclick="addToCart(6)">
+                                <svg class="icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+    </div>
+
+    <!-- PAGE 2: CATALOG -->
+    <div id="page-catalog" class="app-page">
+        <div class="subpage-header">
+            <div class="subpage-title">Product Catalog</div>
+        </div>
+        <div class="page-container">
+            <div class="cat-grid">
+                <div class="cat-box" onclick="selectCatalogCategory('Mugs')">
+                    <div class="cat-icon-circle">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path></svg>
+                    </div>
+                    <div style="font-weight:700; font-size:14px;">Magic &amp; Ceramic Mugs</div>
+                    <div style="font-size:11px; color:var(--text-muted);">Heat sensitive &amp; color mugs</div>
+                </div>
+                <div class="cat-box" onclick="selectCatalogCategory('Frames')">
+                    <div class="cat-icon-circle">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    </div>
+                    <div style="font-weight:700; font-size:14px;">LED &amp; Wooden Frames</div>
+                    <div style="font-size:11px; color:var(--text-muted);">Acrylic glow &amp; rotating lamps</div>
+                </div>
+                <div class="cat-box" onclick="selectCatalogCategory('SALE')">
+                    <div class="cat-icon-circle">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                    </div>
+                    <div style="font-weight:700; font-size:14px;">Flash Sale Offers</div>
+                    <div style="font-size:11px; color:var(--text-muted);">Up to 20% off custom gifts</div>
+                </div>
+                <div class="cat-box" onclick="navigateTo('page-quote')">
+                    <div class="cat-icon-circle">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                    </div>
+                    <div style="font-weight:700; font-size:14px;">Wholesale &amp; Bulk</div>
+                    <div style="font-size:11px; color:var(--text-muted);">Plain sublimation boxes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: CART -->
+    <div id="page-cart" class="app-page">
+        <div class="subpage-header">
+            <div class="subpage-title">Shopping Cart (<span id="cart-page-count">0</span>)</div>
+        </div>
+        <div class="page-container">
+            <div id="cart-items-list"></div>
+            <div id="checkout-start" style="display:none; margin-top:14px;">
+                <button class="primary-btn" onclick="showCheckoutForm()">Proceed to Checkout</button>
+            </div>
+            <div id="checkout-section" style="display:none;">
+                <div class="form-card">
+                    <div style="font-weight:800;font-size:15px;margin-bottom:12px;">Order Details</div>
+                    <label class="input-label">Full Name</label>
+                    <input type="text" id="cust-name" class="text-field" placeholder="Enter your full name" autocomplete="name">
+                    <label class="input-label">Phone / WhatsApp Number</label>
+                    <input type="tel" id="cust-phone" class="text-field" placeholder="03XXXXXXXXX" maxlength="11" inputmode="numeric">
+                    <label class="input-label">Country</label>
+                    <select id="cust-country" class="text-field"><option value="Pakistan" selected>Pakistan</option></select>
+                    <label class="input-label">Province</label>
+                    <select id="cust-province" class="text-field" onchange="updateDeliveryInfo()">
+                        <option value="Punjab" selected>Punjab</option><option value="Sindh">Sindh</option><option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option><option value="Balochistan">Balochistan</option><option value="Islamabad Capital Territory">Islamabad Capital Territory</option><option value="Gilgit-Baltistan">Gilgit-Baltistan</option><option value="Azad Jammu &amp; Kashmir">Azad Jammu &amp; Kashmir</option>
+                    </select>
+                    <label class="input-label">City</label>
+                    <input type="text" id="cust-city" class="text-field" placeholder="Enter your city">
+                    <label class="input-label">District</label>
+                    <input type="text" id="cust-district" class="text-field" placeholder="Enter your district">
+                    <label class="input-label">Complete Address</label>
+                    <textarea id="cust-address" class="text-field" rows="3" placeholder="House number, street, area, and nearby landmark"></textarea>
+                </div>
+                <div class="form-card">
+                    <div style="font-weight:800;font-size:15px;margin-bottom:10px;">Payment Method</div>
+                    <div class="payment-choice-grid">
+                        <label class="payment-choice"><input type="radio" name="payment-method" value="COD" checked onchange="togglePaymentDetails()"> <span><b>Cash on Delivery</b><small>Pay when your order arrives</small></span></label>
+                        <label class="payment-choice"><input type="radio" name="payment-method" value="Easypaisa" onchange="togglePaymentDetails()"> <span><b>Easypaisa</b><small>Send payment to HY STORE</small></span></label>
+                        <label class="payment-choice"><input type="radio" name="payment-method" value="JazzCash" onchange="togglePaymentDetails()"> <span><b>JazzCash</b><small>Send payment to HY STORE</small></span></label>
+                        <label class="payment-choice"><input type="radio" name="payment-method" value="Other Bank" onchange="togglePaymentDetails()"> <span><b>Other Bank / Wallet</b><small>Choose the bank or wallet you paid from</small></span></label>
+                    </div>
+                    <div id="online-payment-details" style="display:none;margin-top:12px;">
+                        <div id="store-payment-account" class="payment-account-box">
+                            <b>HY STORE</b><div id="payment-account-label">Easypaisa / JazzCash</div>
+                            <div class="payment-number">03478306672</div>
+                            <small>Transfer the order amount to this number.</small>
+                        </div>
+                        <div id="other-bank-field" style="display:none;">
+                            <label class="input-label">Bank / Wallet You Paid From</label>
+                            <input id="cust-bank-name" class="text-field" placeholder="Enter your bank or wallet name">
+                        </div>
+                        <label class="input-label">Sender / Account Holder Name</label>
+                        <input type="text" id="payment-sender" class="text-field" placeholder="Name on the sending account">
+                        <label class="input-label">Transaction ID / TRX ID</label>
+                        <input type="text" id="payment-trx" class="text-field" placeholder="Enter transaction reference">
+                        <label class="input-label">Payment Receipt</label>
+                        <input type="file" id="payment-receipt" class="text-field" accept="image/*">
+                        <small style="color:var(--text-muted);">Upload a clear screenshot or photo of your payment receipt.</small>
+                    </div>
+                </div>
+                <div class="form-card">
+                    <div style="font-weight:800;font-size:15px;margin-bottom:10px;">Order Summary</div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;"><span>Subtotal</span><b id="checkout-subtotal">PKR 0</b></div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;"><span>Delivery</span><b id="checkout-delivery">PKR 200</b></div>
+                    <div id="delivery-note" style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Punjab delivery charge: PKR 200</div>
+                    <div style="display:flex;justify-content:space-between;font-weight:800;font-size:15px;padding-top:10px;border-top:1px solid var(--border-light);"><span>Total Bill</span><span style="color:var(--primary-red);" id="cart-page-total">PKR 0</span></div>
+                    <button class="primary-btn" style="margin-top:14px;" onclick="submitOrder()">Confirm &amp; Place Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 4: SAVED WISHLIST -->
+    <div id="page-saved" class="app-page">
+        <div class="subpage-header">
+            <div class="subpage-title">Saved Items</div>
+        </div>
+        <div class="page-container" style="padding: 12px 0;">
+            <div class="product-grid" id="saved-feed"></div>
+        </div>
+    </div>
+
+    <!-- PAGE 5: PROFILE & AUTH -->
+    <div id="page-profile" class="app-page active-page">
+        <div class="subpage-header">
+            <div class="subpage-title">My Account</div>
+        </div>
+        <div class="page-container">
+            <div class="profile-banner">
+                <div class="avatar-circle" onclick="triggerDPChange()" title="Tap to change DP">
+                    <img id="profile-page-dp" src="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;rect width='100' height='100' fill='%231D4ED8'/&gt;&lt;circle cx='50' cy='38' r='18' fill='%23FFFFFF'/&gt;&lt;path d='M20 88 C20 66, 80 66, 80 88' fill='%23FFFFFF'/&gt;&lt;/svg&gt;" alt="Profile DP">
+                </div>
+                <div style="flex:1;">
+                    <div style="font-weight:800; font-size:16px;" id="profile-user-name">Guest User</div>
+                    <div style="font-size:12px; color:#BFDBFE;" id="profile-user-email">Not signed in yet</div>
+                    <button onclick="triggerDPChange()" style="margin-top:6px; background:rgba(255,255,255,0.18); color:white; border:1px solid rgba(255,255,255,0.35); border-radius:14px; padding:3px 10px; font-size:11px; font-weight:600; cursor:pointer;">Change Profile DP</button>
+                </div>
+            </div>
+
+            <div id="auth-forms-container">
+                <div class="form-card" id="google-login-card">
+                    <div style="font-weight:800; font-size:15px; margin-bottom:4px; color:var(--dark-black);">HY STORE Account Portal</div>
+                    <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">Sign in with Google or use email &amp; password below.</div>
+                    
+                    <button class="google-login-btn" onclick="triggerGoogleSignIn()">
+                        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"></path><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"></path><path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"></path><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"></path></svg>
+                        Login with Google
+                    </button>
+
+                    <div style="display:flex; align-items:center; margin:12px 0; color:#aaa; font-size:11px;">
+                        <div style="flex:1; height:1px; background:var(--border-light);"></div>
+                        <span style="padding:0 8px;">OR EMAIL LOGIN</span>
+                        <div style="flex:1; height:1px; background:var(--border-light);"></div>
+                    </div>
+
+                    <div id="login-form-view">
+                        <label class="input-label">Email Address</label>
+                        <input type="email" id="login-email" class="text-field" placeholder="name@example.com">
+                        <label class="input-label">Password</label>
+                        <input type="password" id="login-password" class="text-field" placeholder="••••••••">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:12px;">
+                            <span onclick="switchAuthView('forgot')" style="color:var(--primary-blue); font-weight:700; cursor:pointer;">Forgot Password?</span>
+                            <span onclick="switchAuthView('register')" style="color:var(--primary-red); font-weight:700; cursor:pointer;">Create Account</span>
+                        </div>
+                        <button class="blue-btn" onclick="handleEmailLogin()">Login to Account</button>
+                    </div>
+
+                    <div id="register-form-view" style="display:none;">
+                        <label class="input-label">Full Name</label>
+                        <input type="text" id="reg-name" class="text-field" placeholder="Muhammad Ibrahim">
+                        <label class="input-label">Email Address</label>
+                        <input type="email" id="reg-email" class="text-field" placeholder="name@example.com">
+                        <label class="input-label">Create Password</label>
+                        <input type="password" id="reg-password" class="text-field" placeholder="••••••••">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:12px;">
+                            <span style="color:var(--text-muted);">Already have account?</span>
+                            <span onclick="switchAuthView('login')" style="color:var(--primary-blue); font-weight:700; cursor:pointer;">Login here</span>
+                        </div>
+                        <button class="primary-btn" onclick="handleEmailRegister()">Create New Account</button>
+                    </div>
+
+                    <div id="forgot-form-view" style="display:none;">
+                        <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Enter your account email to receive a password reset code.</div>
+                        <label class="input-label">Account Email</label>
+                        <input type="email" id="forgot-email" class="text-field" placeholder="name@example.com">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:12px;">
+                            <span>Remember password?</span>
+                            <span onclick="switchAuthView('login')" style="color:var(--primary-blue); font-weight:700; cursor:pointer;">Back to Login</span>
+                        </div>
+                        <button class="blue-btn" onclick="handleForgotPassword()">Send Reset Instructions</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-card" id="logout-card" style="display:none;">
+                <button class="primary-btn" onclick="logoutUser()">Sign Out from Account</button>
+            </div>
+
+
+            <div class="form-card" id="profile-settings-card" style="margin-top:14px;">
+                <div style="font-weight:800;font-size:15px;margin-bottom:12px;">⚙️ App Settings</div>
+                <label class="input-label" for="app-language">Language</label>
+                <select id="app-language" class="text-field" onchange="changeAppLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="ur">اردو (Urdu)</option>
+                    <option value="ar">العربية (Arabic)</option>
+                    <option value="zh">中文 (Chinese)</option>
+                    <option value="es">Español (Spanish)</option>
+                    <option value="fr">Français (French)</option>
+                    <option value="tr">Türkçe (Turkish)</option>
+                </select>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;gap:10px;">
+                    <div><div style="font-weight:700;font-size:13px;">Dark Theme</div><div style="font-size:11px;color:var(--text-muted);">Use a darker app appearance</div></div>
+                    <input id="dark-theme-toggle" type="checkbox" style="width:22px;height:22px;" onchange="setAppTheme(this.checked)">
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;gap:10px;">
+                    <div><div style="font-weight:700;font-size:13px;">Compact Layout</div><div style="font-size:11px;color:var(--text-muted);">Smaller spacing and buttons</div></div>
+                    <input id="compact-layout-toggle" type="checkbox" style="width:22px;height:22px;" onchange="setCompactLayout(this.checked)">
+                </div>
+                <div id="settings-save-note" style="font-size:10px;color:var(--text-muted);margin-top:10px;">Your preferences are saved on this device.</div>
+            </div>
+
+            <div style="font-weight:800; font-size:14px; margin-bottom:10px; margin-top:14px;">My Recent Orders</div>
+            <div id="order-history-list">
+                <div class="form-card" style="text-align:center; color:var(--text-muted); font-size:13px;">
+                    No orders placed yet. Add items to cart to place your first order!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 6: PRODUCT DETAIL & CUSTOM PHOTO STUDIO -->
+    <div id="page-detail" class="app-page">
+        <div class="subpage-header">
+            <button class="back-btn" onclick="navigateTo('page-home', 0)">
+                <svg class="icon-sm" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <div class="subpage-title">Product &amp; Custom Studio</div>
+        </div>
+        <div class="page-container">
+            <div class="detail-preview-box">
+                <div id="detail-sketch-container"></div>
+                <img id="custom-photo-preview" class="uploaded-preview-img" alt="Your Photo Preview">
+                <div id="custom-text-preview" style="font-size:12px; font-weight:700; color:var(--primary-blue); margin-top:6px;"></div>
+            </div>
+            <div class="form-card">
+                <div id="detail-title" style="font-size:16px; font-weight:800; margin-bottom:4px;"></div>
+                <div id="detail-price" style="font-size:18px; font-weight:900; color:var(--primary-red); margin-bottom:6px;"></div>
+                <div id="detail-moq" style="font-size:12px; color:var(--text-muted); margin-bottom:14px;"></div>
+                <label class="input-label">1. Upload Photo for Printing (Optional)</label>
+                <input type="file" id="photo-upload-input" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
+                <button class="outline-btn" onclick="document.getElementById('photo-upload-input').click()">
+                    <svg class="icon-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Choose Photo from Gallery
+                </button>
+                <label class="input-label">2. Custom Name / Message on Gift</label>
+                <input type="text" id="custom-note-input" class="text-field" placeholder="e.g. Happy Birthday Ali" onkeyup="updateCustomTextPreview()">
+                <button class="primary-btn" id="detail-add-cart-btn">Add Customized Item to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 7: REQUEST BULK QUOTE -->
+    <div id="page-quote" class="app-page">
+        <div class="subpage-header">
+            <button class="back-btn" onclick="navigateTo('page-home', 0)">
+                <svg class="icon-sm" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <div class="subpage-title">Request Wholesale Quote</div>
+        </div>
+        <div class="page-container">
+            <div class="form-card">
+                <label class="input-label">Product Type</label>
+                <select id="quote-product" class="text-field">
+                    <option>Magic Photo Mugs (Bulk)</option>
+                    <option>Plain White Sublimation Mugs</option>
+                    <option>Acrylic LED Photo Frames</option>
+                    <option>Corporate / Event Gift Boxes</option>
+                </select>
+                <label class="input-label">Required Quantity (Pieces)</label>
+                <input type="number" id="quote-qty" class="text-field" placeholder="e.g. 50">
+                <label class="input-label">Your WhatsApp Number</label>
+                <input type="tel" id="quote-phone" class="text-field" placeholder="03XX-XXXXXXX">
+                <button class="blue-btn" onclick="submitQuote()">Submit Quote Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Professional AI Assistant Trigger Button -->
+    <div class="floating-ai-btn" onclick="openAIAssistantModal()" title="HY STORE AI Assistant">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2l2.4 7.4L22 12l-7.6 2.6L12 22l-2.4-7.4L2 12l7.6-2.6L12 2z"></path>
+            <path d="M19 5l-1 3-3 1 3 1 1 3 1-3 3-1-3-1-1-3z"></path>
+        </svg>
+    </div>
+
+    <!-- AI ASSISTANT CHAT MODAL -->
+    <div class="modal-overlay" id="ai-assistant-modal" onclick="closeAIMapModal(event)" style="display: none;">
+        <div class="modal-sheet" style="max-width: 500px; height: 82vh; display: flex; flex-direction: column; padding: 16px;" onclick="event.stopPropagation()">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-light); padding-bottom:10px; margin-bottom:10px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div style="width:32px; height:32px; background:linear-gradient(135deg, #FF5722, #E50914); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white;">✨</div>
+                    <div>
+                        <div style="font-weight:800; font-size:15px; color:var(--dark-black);">HY STORE AI Assistant</div>
+                        <div style="font-size:11px; color:#10B981; font-weight:600;">● Online • Ready to help</div>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('ai-assistant-modal').style.display='none'" style="background:none; border:none; font-size:20px; color:#666; cursor:pointer;">×</button>
+            </div>
+            <div id="ai-chat-messages" style="flex:1; overflow-y:auto; padding:6px; display:flex; flex-direction:column; gap:10px; margin-bottom:12px; scrollbar-width:thin;">
+                <div style="background:var(--primary-blue-light); padding:10px 12px; border-radius:12px; font-size:13px; color:var(--dark-black); max-width:88%; align-self:flex-start; border:1px solid #BFDBFE;">
+                    Hello! I am the HY STORE AI Assistant. How can I help you with mug printing, LED frames, order tracking, or the website? 😊
+                </div>
+            
+                <div style="background:var(--primary-red); color:white; padding:10px 12px; border-radius:12px; font-size:13px; max-width:88%; align-self:flex-end; word-break:break-word;">
+                    How to order magic mug?
+                </div>
+            
+                    <div style="background:var(--primary-blue-light); padding:10px 12px; border-radius:12px; font-size:13px; color:var(--dark-black); max-width:88%; align-self:flex-start; border:1px solid #BFDBFE;">
+                        Magic Photo Mugs are available for PKR 1,150. Select Design Your Mug on the Home page to personalize your mug.
+                    </div>
+                
+                <div style="background:var(--primary-red); color:white; padding:10px 12px; border-radius:12px; font-size:13px; max-width:88%; align-self:flex-end; word-break:break-word;">
+                    What is FREE shipping policy?
+                </div>
+            
+                    <div style="background:var(--primary-blue-light); padding:10px 12px; border-radius:12px; font-size:13px; color:var(--dark-black); max-width:88%; align-self:flex-start; border:1px solid #BFDBFE;">
+                        We offer FREE shipping on your first order, with careful packaging for safe delivery.
+                    </div>
+                
+                <div style="background:var(--primary-red); color:white; padding:10px 12px; border-radius:12px; font-size:13px; max-width:88%; align-self:flex-end; word-break:break-word;">
+                    How to track my order?
+                </div>
+            
+                    <div style="background:var(--primary-blue-light); padding:10px 12px; border-radius:12px; font-size:13px; color:var(--dark-black); max-width:88%; align-self:flex-start; border:1px solid #BFDBFE;">
+                        You can check your order status and tracking ID in the Profile tab.
+                    </div>
+                
+                <div style="background:var(--primary-red); color:white; padding:10px 12px; border-radius:12px; font-size:13px; max-width:88%; align-self:flex-end; word-break:break-word;">
+                    Hey
+                </div>
+            
+                    <div style="background:var(--primary-blue-light); padding:10px 12px; border-radius:12px; font-size:13px; color:var(--dark-black); max-width:88%; align-self:flex-start; border:1px solid #BFDBFE;">
+                        Welcome to HY STORE! Explore custom magic mugs, acrylic LED frames, and wholesale ordering through our app.
+                    </div>
+                </div>
+            <div style="display:flex; gap:6px; overflow-x:auto; padding-bottom:8px; scrollbar-width:none;">
+                <button onclick="sendAIChatPrompt('How to order magic mug?')" style="background:var(--bg-surface); border:1px solid var(--border-light); border-radius:16px; padding:5px 10px; font-size:11px; white-space:nowrap; cursor:pointer;">☕ Magic Mug Order</button>
+                <button onclick="sendAIChatPrompt('What is FREE shipping policy?')" style="background:var(--bg-surface); border:1px solid var(--border-light); border-radius:16px; padding:5px 10px; font-size:11px; white-space:nowrap; cursor:pointer;">🚚 Free Shipping</button>
+                <button onclick="sendAIChatPrompt('How to track my order?')" style="background:var(--bg-surface); border:1px solid var(--border-light); border-radius:16px; padding:5px 10px; font-size:11px; white-space:nowrap; cursor:pointer;">📦 Track Order</button>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; border-top:1px solid var(--border-light); padding-top:10px;">
+                <input type="text" id="ai-chat-input" class="text-field" placeholder="Ask AI Assistant anything..." style="margin-bottom:0; flex:1;" onkeypress="if(event.key==='Enter')sendUserAIChat()">
+                <button class="primary-btn" style="width:auto; padding:10px 16px; border-radius:20px;" onclick="sendUserAIChat()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <nav class="bottom-nav">
+        <div class="nav-item" onclick="navigateTo('page-home', 0)">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"></path></svg>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" onclick="navigateTo('page-catalog', 1)">
+            <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="6.5" cy="6.5" r="3"></circle><line x1="8.8" y1="8.8" x2="10.5" y2="10.5"></line><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"></rect><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"></rect><rect x="14" y="14" width="6.5" height="6.5" rx="1.5"></rect></svg>
+            <span>Catalog</span>
+        </div>
+        <div class="nav-item" onclick="navigateTo('page-cart', 2)">
+            <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle><path d="M2 3h3l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h9.2a1.5 1.5 0 0 0 1.4-1.1L21 7H6"></path></svg>
+            <span class="cart-badge" id="nav-cart-count">0</span>
+            <span>Cart</span>
+        </div>
+        <div class="nav-item" onclick="navigateTo('page-saved', 3)">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span>Saved</span>
+        </div>
+        <div class="nav-item active" onclick="navigateTo('page-profile', 4)">
+            <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-3.8 3.6-6.5 8-6.5s8 2.7 8 6.5"></path></svg>
+            <span>Profile</span>
+        </div>
+    </nav>
+    <div class="gesture-bar"></div>
+
+    <script>
+        const GOOGLE_CLIENT_ID = "";
+
+        const svgIcons = {
+            mug: `<svg class="icon-lg" viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>`,
+            frame: `<svg class="icon-lg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+            gift: `<svg class="icon-lg" viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>`,
+            box: `<svg class="icon-lg" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`
+        };
+
+        const catalog = [
+            { id: 1, title: "Heat Sensitive Magic Photo Mug (Black Matte)", price: 1150, moq: "1 piece", category: "Mugs", tag: "SALE", badge: "LIVE", badgeColor: "red", sketch: "mug", saved: false },
+            { id: 2, title: "Personalized Acrylic LED Couple Glow Frame", price: 2450, moq: "1 piece", category: "Frames", tag: "Deals", badge: "HOT", badgeColor: "blue", sketch: "frame", saved: false },
+            { id: 3, title: "Sublimation White Ceramic Gift Mug + Box", price: 790, moq: "1 piece", category: "Mugs", tag: "SALE", badge: "-20%", badgeColor: "red", sketch: "gift", saved: false },
+            { id: 4, title: "Heart Handle Inner Red Custom Printed Mug", price: 1050, moq: "1 piece", category: "Mugs", tag: "Deals", badge: "", badgeColor: "red", sketch: "mug", saved: false },
+            { id: 5, title: "Wooden Rotating Photo Cube Lamp Frame", price: 3200, moq: "1 piece", category: "Frames", tag: "SALE", badge: "NEW", badgeColor: "blue", sketch: "frame", saved: false },
+            { id: 6, title: "Wholesale Plain Sublimation Mugs (Box of 36)", price: 280, moq: "36 pieces", category: "Mugs", tag: "Deals", badge: "BULK", badgeColor: "blue", sketch: "box", saved: false }
+        ];
+
+        let cart = [];
+        let orders = JSON.parse(localStorage.getItem('hy_store_orders') || '[]');
+        let notifications = JSON.parse(localStorage.getItem('hy_store_notifications') || '[]');
+        let currentUser = null;
+
+        const savedPhoneAccounts = [
+            {
+                name: "Muhammad Ibrahim",
+                email: "ibrahim.design@gmail.com",
+                dp: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231D4ED8'/><text x='50' y='62' font-size='42' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>MI</text></svg>"
+            },
+            {
+                name: "HY Store Official",
+                email: "hystore.orders@gmail.com",
+                dp: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23E50914'/><text x='50' y='62' font-size='42' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>HY</text></svg>"
+            }
+        ];
+
+        function showToast(msg) {
+            const toast = document.getElementById('app-toast');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2600);
+        }
+
+        function addNotification(title, message) {
+            notifications.unshift({title, message, time: new Date().toLocaleString()});
+            notifications = notifications.slice(0, 50);
+            localStorage.setItem('hy_store_notifications', JSON.stringify(notifications));
+            renderNotifications();
+        }
+
+        function renderNotifications() {
+            const list = document.getElementById('notif-list');
+            if (!list) return;
+            const defaults = [
+                {title:'Welcome Offer Unlocked',message:'Enjoy FREE shipping on your first customized mug or LED frame order!'},
+                {title:'20% Flash Sale Live',message:'Magic Photo Mugs and Acrylic Glow Frames are on limited discount.'}
+            ];
+            const all = notifications.length ? notifications : defaults;
+            list.innerHTML = all.map(n => `<div class="order-card" style="border-left:3px solid var(--primary-blue);"><div style="font-weight:700;font-size:13px;">${escapeHTML(n.title)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">${escapeHTML(n.message)}</div><div style="font-size:9px;color:#999;margin-top:5px;">${escapeHTML(n.time || '')}</div></div>`).join('');
+            const badge = document.getElementById('notif-badge');
+            if (badge) {
+                badge.innerText = notifications.length;
+                badge.style.display = notifications.length ? 'inline-block' : 'none';
+            }
+        }
+
+        function escapeHTML(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        }
+
+        function initSavedSession() {
+            const savedUser = localStorage.getItem('hy_user_session');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                applyUserToUI();
+            }
+        }
+
+        function triggerGoogleSignIn() {
+            if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID.trim() !== "" && window.google && google.accounts) {
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: handleGoogleCredentialResponse
+                });
+                google.accounts.id.prompt();
+            } else {
+                openGoogleAccountPicker();
+            }
+        }
+
+        function handleGoogleCredentialResponse(response) {
+            try {
+                const base64Url = response.credential.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const payload = JSON.parse(decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+                currentUser = {
+                    name: payload.name || "Google User",
+                    email: payload.email,
+                    dp: payload.picture || savedPhoneAccounts[0].dp
+                };
+                localStorage.setItem('hy_user_session', JSON.stringify(currentUser));
+                applyUserToUI();
+                showToast("Signed in as " + currentUser.name);
+            } catch (e) {
+                openGoogleAccountPicker();
+            }
+        }
+
+        function openGoogleAccountPicker() {
+            const listEl = document.getElementById('device-accounts-list');
+            listEl.innerHTML = savedPhoneAccounts.map((acc, idx) => `
+                <div class="account-row" onclick="selectPhoneAccount(${idx})">
+                    <img src="${acc.dp}" alt="${acc.name}">
+                    <div style="flex:1;">
+                        <div style="font-weight:700; font-size:13px; color:var(--dark-black);">${acc.name}</div>
+                        <div style="font-size:11px; color:var(--text-muted);">${acc.email}</div>
+                    </div>
+                    <svg class="icon-sm" style="color:var(--primary-blue);" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+            `).join('');
+            document.getElementById('google-picker-modal').style.display = 'flex';
+        }
+
+        function selectPhoneAccount(index) {
+            const acc = savedPhoneAccounts[index];
+            currentUser = { ...acc };
+            localStorage.setItem('hy_user_session', JSON.stringify(currentUser));
+            document.getElementById('google-picker-modal').style.display = 'none';
+            applyUserToUI();
+            showToast("Logged in with " + acc.email);
+        }
+
+        function loginWithCustomGmail() {
+            const emailVal = document.getElementById('custom-gmail-input').value.trim();
+            if (!emailVal || !emailVal.includes('@')) {
+                showToast("Please enter a valid Gmail address");
+                return;
+            }
+            const namePart = emailVal.split('@')[0].replace(/[._]/g, ' ');
+            const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+            const initials = formattedName.substring(0, 2).toUpperCase();
+
+            currentUser = {
+                name: formattedName,
+                email: emailVal,
+                dp: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231D4ED8'/><text x='50' y='62' font-size='40' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>${initials}</text></svg>`
+            };
+            localStorage.setItem('hy_user_session', JSON.stringify(currentUser));
+            document.getElementById('google-picker-modal').style.display = 'none';
+            applyUserToUI();
+            showToast("Logged in as " + formattedName);
+        }
+
+        function applyUserToUI() {
+            if (!currentUser) return;
+            document.getElementById('header-user-dp').src = currentUser.dp;
+            document.getElementById('profile-page-dp').src = currentUser.dp;
+            document.getElementById('header-greeting-text').innerHTML = `Hey ${currentUser.name.split(' ')[0]} 👋`;
+            document.getElementById('header-sub-status').innerText = currentUser.email;
+            document.getElementById('profile-user-name').innerText = currentUser.name;
+            document.getElementById('profile-user-email').innerText = currentUser.email;
+            document.getElementById('cust-name').value = currentUser.name;
+            document.getElementById('google-login-card').style.display = 'none';
+            document.getElementById('logout-card').style.display = 'block';
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem('hy_user_session');
+            const defaultDP = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23EFF6FF'/><circle cx='50' cy='38' r='18' fill='%231D4ED8'/><path d='M20 88 C20 66, 80 66, 80 88' fill='%231D4ED8'/></svg>";
+            document.getElementById('header-user-dp').src = defaultDP;
+            document.getElementById('profile-page-dp').src = defaultDP;
+            document.getElementById('header-greeting-text').innerHTML = `Hey There 👋`;
+            document.getElementById('header-sub-status').innerText = "Tap to Login with Google";
+            document.getElementById('profile-user-name').innerText = "Guest User";
+            document.getElementById('profile-user-email').innerText = "Not signed in yet";
+            document.getElementById('google-login-card').style.display = 'block';
+            document.getElementById('logout-card').style.display = 'none';
+            showToast("Signed out successfully");
+        }
+
+        function handleHeaderGreetingClick() {
+            if (!currentUser) triggerGoogleSignIn();
+            else navigateTo('page-profile', 4);
+        }
+
+        function handleAuthAction() {
+            if (!currentUser) triggerGoogleSignIn();
+            else logoutUser();
+        }
+
+        function closeGoogleModal(e) {
+            if (e.target.id === 'google-picker-modal') {
+                document.getElementById('google-picker-modal').style.display = 'none';
+            }
+        }
+
+        function triggerDPChange() {
+            document.getElementById('dp-file-input').click();
+        }
+
+        function changeUserDP(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const newDP = e.target.result;
+                    document.getElementById('header-user-dp').src = newDP;
+                    document.getElementById('profile-page-dp').src = newDP;
+                    if (currentUser) {
+                        currentUser.dp = newDP;
+                        localStorage.setItem('hy_user_session', JSON.stringify(currentUser));
+                    }
+                    showToast("Profile DP Updated!");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function openNotifications() {
+            renderNotifications();
+            document.getElementById('notif-modal').style.display = 'flex';
+            document.getElementById('notif-badge').style.display = 'none';
+        }
+
+        function navigateTo(pageId, navIndex = -1) {
+            document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active-page'));
+            document.getElementById(pageId).classList.add('active-page');
+            if (navIndex >= 0) {
+                document.querySelectorAll('.nav-item').forEach((n, idx) => {
+                    n.classList.toggle('active', idx === navIndex);
+                });
+            }
+            if (pageId === 'page-cart') renderCartPage();
+            if (pageId === 'page-saved') renderSavedPage();
+            if (pageId === 'page-profile') renderOrdersPage();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function createCardHTML(item) {
+            const badgeClass = item.badgeColor === 'blue' ? 'badge-tag blue' : 'badge-tag';
+            const badgeHTML = item.badge ? `<div class="${badgeClass}">${item.badge}</div>` : '';
+            return `
+                <div class="product-card">
+                    ${badgeHTML}
+                    <button class="save-card-btn ${item.saved ? 'saved' : ''}" onclick="toggleSave(${item.id})">
+                        <svg class="icon-sm" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </button>
+                    <div class="product-img-box" onclick="openProductDetail(${item.id})">
+                        ${svgIcons[item.sketch]}
+                        <div class="lens-btn">
+                            <svg class="icon-sm" style="width:13px;height:13px;" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></svg>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title" onclick="openProductDetail(${item.id})">${item.title}</div>
+                        <div class="price-row">
+                            <div>
+                                <div class="product-price">PKR ${item.price.toLocaleString()}</div>
+                                <div class="moq-text">MOQ: ${item.moq}</div>
+                            </div>
+                            <button class="quick-add-btn" onclick="addToCart(${item.id})">
+                                <svg class="icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFeed(items) {
+            const feed = document.getElementById('product-feed');
+            if (items.length === 0) {
+                feed.innerHTML = '<p style="grid-column: span 2; text-align:center; color:#777; padding:40px 0; font-size:13px;">No products found.</p>';
+                return;
+            }
+            feed.innerHTML = items.map(createCardHTML).join('');
+        }
+
+        function filterItems(filter, el) {
+            if (el) {
+                document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                el.classList.add('active');
+            }
+            if (filter === 'All') renderFeed(catalog);
+            else {
+                const filtered = catalog.filter(p => p.category === filter || p.tag === filter);
+                renderFeed(filtered);
+            }
+        }
+
+        function selectCatalogCategory(cat) {
+            navigateTo('page-home', 0);
+            filterItems(cat);
+        }
+
+        function searchProducts() {
+            const query = document.getElementById('search-box').value.toLowerCase();
+            const filtered = catalog.filter(p => p.title.toLowerCase().includes(query));
+            renderFeed(filtered);
+        }
+
+        function openCameraSearch() {
+            const camInput = document.createElement('input');
+            camInput.type = 'file';
+            camInput.accept = 'image/*';
+            camInput.capture = 'environment';
+            camInput.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    showToast("Image captured! Searching...");
+                    document.getElementById('search-box').value = "Custom Photo";
+                    searchProducts();
+                }
+            };
+            camInput.click();
+        }
+
+        function simulateVoiceSearch() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                try {
+                    const recognition = new SpeechRecognition();
+                    recognition.lang = 'en-US';
+                    recognition.interimResults = false;
+                    recognition.maxAlternatives = 1;
+                    showToast("Listening... Speak now 🎙️");
+                    recognition.onresult = function(event) {
+                        const speechResult = event.results[0][0].transcript;
+                        document.getElementById('search-box').value = speechResult;
+                        searchProducts();
+                        showToast("Searched: " + speechResult);
+                    };
+                    recognition.onerror = function() {
+                        promptVoiceSearchFallback();
+                    };
+                    recognition.start();
+                    return;
+                } catch (e) {
+                    promptVoiceSearchFallback();
+                }
+            } else {
+                promptVoiceSearchFallback();
+            }
+        }
+
+        function promptVoiceSearchFallback() {
+            const spoken = prompt("🎙️ Voice Input:\nType what you want to search (Magic Mug, LED Frame, etc.):", "");
+            if (spoken !== null && spoken.trim() !== "") {
+                document.getElementById('search-box').value = spoken.trim();
+                searchProducts();
+                showToast("Searched: " + spoken.trim());
+            }
+        }
+
+        function openAIAssistantModal() {
+            document.getElementById('ai-assistant-modal').style.display = 'flex';
+        }
+
+        function closeAIMapModal(e) {
+            if (e.target.id === 'ai-assistant-modal') {
+                document.getElementById('ai-assistant-modal').style.display = 'none';
+            }
+        }
+
+        function sendAIChatPrompt(txt) {
+            document.getElementById('ai-chat-input').value = txt;
+            sendUserAIChat();
+        }
+
+        function sendUserAIChat() {
+            const inputEl = document.getElementById('ai-chat-input');
+            const query = inputEl.value.trim();
+            if (!query) return;
+
+            const chatContainer = document.getElementById('ai-chat-messages');
+            chatContainer.innerHTML += `
+                <div style="background:var(--primary-red); color:white; padding:10px 12px; border-radius:12px; font-size:13px; max-width:88%; align-self:flex-end; word-break:break-word;">
+                    ${query}
+                </div>
+            `;
+            inputEl.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            setTimeout(() => {
+                let reply = "Welcome to HY STORE! Explore custom magic mugs, acrylic LED frames, and wholesale ordering through our app.";
+                const qLower = query.toLowerCase();
+                if (qLower.includes('mug') || qLower.includes('magic')) {
+                    reply = "Magic Photo Mugs are available for PKR 1,150. Select Design Your Mug on the Home page to personalize your mug.";
+                } else if (qLower.includes('shipping') || qLower.includes('delivery')) {
+                    reply = "We offer FREE shipping on your first order, with careful packaging for safe delivery.";
+                } else if (qLower.includes('track') || qLower.includes('order')) {
+                    reply = "You can check your order status and tracking ID in the Profile tab.";
+                } else if (qLower.includes('price') || qLower.includes('cost')) {
+                    reply = "Mugs start from PKR 790, and LED Frames start from PKR 2,450.";
+                }
+
+                chatContainer.innerHTML += `
+                    <div style="background:var(--primary-blue-light); padding:10px 12px; border-radius:12px; font-size:13px; color:var(--dark-black); max-width:88%; align-self:flex-start; border:1px solid #BFDBFE;">
+                        ${reply}
+                    </div>
+                `;
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 600);
+        }
+
+        function toggleSave(id) {
+            const product = catalog.find(p => p.id === id);
+            product.saved = !product.saved;
+            renderFeed(catalog);
+            renderSavedPage();
+            showToast(product.saved ? "Saved to Wishlist" : "Removed from Wishlist");
+        }
+
+        function renderSavedPage() {
+            const savedList = catalog.filter(p => p.saved);
+            const container = document.getElementById('saved-feed');
+            if (savedList.length === 0) {
+                container.innerHTML = '<p style="grid-column: span 2; text-align:center; color:#777; padding:50px 20px; font-size:13px;">No saved items yet.</p>';
+                return;
+            }
+            container.innerHTML = savedList.map(createCardHTML).join('');
+        }
+
+        function openProductDetail(id) {
+            const product = catalog.find(p => p.id === id) || catalog[0];
+            document.getElementById('detail-sketch-container').innerHTML = svgIcons[product.sketch];
+            document.getElementById('detail-title').innerText = product.title;
+            document.getElementById('detail-price').innerText = `PKR ${product.price.toLocaleString()}`;
+            document.getElementById('detail-moq').innerText = `Minimum Order: ${product.moq}`;
+            document.getElementById('custom-photo-preview').style.display = 'none';
+            document.getElementById('custom-note-input').value = '';
+            document.getElementById('custom-text-preview').innerText = '';
+
+            document.getElementById('detail-add-cart-btn').onclick = () => {
+                const note = document.getElementById('custom-note-input').value.trim();
+                addToCart(product.id, note);
+                navigateTo('page-cart', 2);
+            };
+            navigateTo('page-detail');
+        }
+
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('custom-photo-preview');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    showToast("Photo attached to preview");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateCustomTextPreview() {
+            const txt = document.getElementById('custom-note-input').value;
+            document.getElementById('custom-text-preview').innerText = txt ? `Print Text: "${txt}"` : '';
+        }
+
+        function addToCart(id, customNote = "") {
+            const product = catalog.find(p => p.id === id);
+            const existing = cart.find(c => c.id === id && c.customNote === customNote);
+            if (existing) existing.qty += 1;
+            else cart.push({ ...product, qty: 1, customNote });
+            updateCartBadge();
+            showToast("Added to Cart");
+        }
+
+        function updateCartBadge() {
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('nav-cart-count').innerText = totalQty;
+            document.getElementById('cart-page-count').innerText = totalQty;
+        }
+
+        function changeQty(index, delta) {
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) cart.splice(index, 1);
+            updateCartBadge();
+            renderCartPage();
+        }
+
+        function renderCartPage() {
+            const list = document.getElementById('cart-items-list');
+            const checkoutSec = document.getElementById('checkout-section');
+            if (cart.length === 0) {
+                list.innerHTML = `
+                    <div class="form-card" style="text-align:center; padding:40px 20px;">
+                        <p style="color:var(--text-muted); font-size:13px; margin-bottom:14px;">Your shopping cart is empty.</p>
+                        <button class="blue-btn" style="max-width:200px; margin:0 auto;" onclick="navigateTo('page-home', 0)">Browse Products</button>
+                    </div>
+                `;
+                checkoutSec.style.display = 'none';
+                document.getElementById('checkout-start').style.display = 'none';
+                return;
+            }
+            let total = 0;
+            list.innerHTML = cart.map((item, idx) => {
+                total += item.price * item.qty;
+                const noteHTML = item.customNote ? `<div style="font-size:11px; color:var(--primary-blue); margin-top:2px;">Custom Note: ${item.customNote}</div>` : '';
+                return `
+                    <div class="cart-item-card">
+                        <div style="max-width:68%;">
+                            <div style="font-size:13px; font-weight:700;">${item.title}</div>
+                            ${noteHTML}
+                            <div style="font-size:13px; font-weight:800; color:var(--primary-red); margin-top:4px;">PKR ${(item.price * item.qty).toLocaleString()}</div>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="changeQty(${idx}, -1)">-</button>
+                                <span style="font-size:13px; font-weight:700;">${item.qty}</span>
+                                <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+                            </div>
+                        </div>
+                        <button onclick="changeQty(${idx}, -99)" style="background:none; border:none; color:var(--text-muted); font-size:12px; font-weight:600; cursor:pointer;">Remove</button>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('checkout-subtotal').innerText = `PKR ${total.toLocaleString()}`;
+            updateDeliveryInfo();
+            checkoutSec.style.display = 'none';
+            document.getElementById('checkout-start').style.display = 'block';
+        }
+
+        function showCheckoutForm() {
+            if (!cart.length) {
+                showToast("Your shopping cart is empty.");
+                return;
+            }
+            document.getElementById('checkout-start').style.display = 'none';
+            document.getElementById('checkout-section').style.display = 'block';
+            document.getElementById('checkout-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function selectedPaymentMethod() {
+            return document.querySelector('input[name="payment-method"]:checked')?.value || 'COD';
+        }
+
+        function togglePaymentDetails() {
+            const method = selectedPaymentMethod();
+            const online = method !== 'COD';
+            document.getElementById('online-payment-details').style.display = online ? 'block' : 'none';
+            document.getElementById('store-payment-account').style.display = (method === 'Easypaisa' || method === 'JazzCash') ? 'block' : 'none';
+            document.getElementById('payment-account-label').innerText = method === 'Easypaisa' ? 'Easypaisa Account' : 'JazzCash Account';
+            document.getElementById('other-bank-field').style.display = method === 'Other Bank' ? 'block' : 'none';
+        }
+
+        function updateDeliveryInfo() {
+            const province = document.getElementById('cust-province')?.value || 'Punjab';
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const delivery = province === 'Punjab' ? 200 : null;
+            const method = selectedPaymentMethod();
+            const codUnavailable = province !== 'Punjab';
+            const codRadio = document.querySelector('input[name="payment-method"][value="COD"]');
+            if (codRadio) {
+                codRadio.disabled = codUnavailable;
+                if (codUnavailable && codRadio.checked) {
+                    document.querySelector('input[name="payment-method"][value="Easypaisa"]').checked = true;
+                    togglePaymentDetails();
+                }
+            }
+            document.getElementById('checkout-delivery').innerText = delivery === null ? 'To be confirmed' : `PKR ${delivery}`;
+            document.getElementById('delivery-note').innerText = province === 'Punjab'
+                ? 'Punjab delivery charge: PKR 200. Cash on Delivery is available.'
+                : 'Cash on Delivery is unavailable outside Punjab. Delivery charges will be confirmed by HY STORE.';
+            document.getElementById('cart-page-total').innerText = `PKR ${(subtotal + (delivery || 0)).toLocaleString()}${delivery === null ? ' + delivery to be confirmed' : ''}`;
+        }
+
+        function playOrderSuccessSound() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                [660, 880, 990].forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.frequency.value = freq;
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    gain.gain.setValueAtTime(0.0001, ctx.currentTime + i * 0.14);
+                    gain.gain.exponentialRampToValueAtTime(0.16, ctx.currentTime + i * 0.14 + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i * 0.14 + 0.18);
+                    osc.start(ctx.currentTime + i * 0.14);
+                    osc.stop(ctx.currentTime + i * 0.14 + 0.2);
+                });
+                setTimeout(() => ctx.close(), 900);
+            } catch (e) {}
+        }
+
+        function closeOrderSuccess() {
+            document.getElementById('order-success-overlay').style.display = 'none';
+            navigateTo('page-profile', 4);
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('cust-name').value.trim();
+            const phone = document.getElementById('cust-phone').value.replace(/\\D/g, '');
+            const country = document.getElementById('cust-country').value;
+            const province = document.getElementById('cust-province').value;
+            const city = document.getElementById('cust-city').value.trim();
+            const district = document.getElementById('cust-district').value.trim();
+            const address = document.getElementById('cust-address').value.trim();
+            const method = selectedPaymentMethod();
+
+            if (!cart.length) { showToast('Your cart is empty.'); return; }
+            if (!name || !phone || !city || !district || !address) { showToast('Please complete all delivery details.'); return; }
+            if (!/^03\\d{9}$/.test(phone)) { showToast('Enter a valid 11-digit phone number starting with 03.'); return; }
+            if (province !== 'Punjab' && method === 'COD') { showToast('Cash on Delivery is available in Punjab only.'); return; }
+
+            const sender = document.getElementById('payment-sender').value.trim();
+            const trx = document.getElementById('payment-trx').value.trim();
+            const receiptInput = document.getElementById('payment-receipt');
+            const bankName = document.getElementById('cust-bank-name').value.trim();
+            if (method !== 'COD') {
+                if (!sender || !trx || !receiptInput.files.length) { showToast('Enter sender name, transaction ID, and upload payment receipt.'); return; }
+                if (method === 'Other Bank' && !bankName) { showToast('Enter the bank or wallet name you paid from.'); return; }
+            }
+
+            const submitBtn = document.querySelector('#checkout-section .primary-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Processing your order...';
+            const finishOrder = (receiptData = '') => {
+                const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+                const delivery = province === 'Punjab' ? 200 : null;
+                const trackingId = 'HY-' + Date.now().toString().slice(-8);
+                const order = {
+                    orderId: trackingId, trackingId, customer: name, phone, country, province, city, district, address,
+                    items: cart.map(item => ({title:item.title, qty:item.qty, price:item.price, customNote:item.customNote || ''})),
+                    itemsCount: cart.reduce((sum, item) => sum + item.qty, 0),
+                    subtotal, delivery, total: subtotal + (delivery || 0), paymentMethod: method,
+                    paymentSender: sender, transactionId: trx, bankName, receipt: receiptData,
+                    status: 'Order Confirmed', createdAt: new Date().toLocaleString()
+                };
+                orders.unshift(order);
+                localStorage.setItem('hy_store_orders', JSON.stringify(orders));
+                document.getElementById('profile-user-name').innerText = name;
+                addNotification('Order placed successfully', `Your order ${trackingId} has been placed. Total: PKR ${order.total.toLocaleString()}.`);
+                cart = [];
+                updateCartBadge();
+                renderOrdersPage();
+                document.getElementById('success-tracking-id').innerText = trackingId;
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Confirm & Place Order';
+                document.getElementById('order-success-overlay').style.display = 'flex';
+                playOrderSuccessSound();
+            };
+
+            if (method === 'COD') {
+                setTimeout(() => finishOrder(), 650);
+            } else {
+                const file = receiptInput.files[0];
+                if (file.size > 2 * 1024 * 1024) {
+                    submitBtn.disabled = false; submitBtn.innerText = 'Confirm & Place Order';
+                    showToast('Receipt image must be 2 MB or smaller.'); return;
+                }
+                const reader = new FileReader();
+                reader.onload = e => setTimeout(() => finishOrder(e.target.result), 650);
+                reader.onerror = () => { submitBtn.disabled = false; submitBtn.innerText = 'Confirm & Place Order'; showToast('Could not read payment receipt.'); };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderOrdersPage() {
+            const container = document.getElementById('order-history-list');
+            if (orders.length === 0) {
+                container.innerHTML = '<div class="form-card" style="text-align:center;color:var(--text-muted);font-size:13px;">No orders placed yet. Add items to your cart to place your first order.</div>';
+                return;
+            }
+            container.innerHTML = orders.map(o => `
+                <div class="order-card">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                        <span style="font-weight:800;font-size:13px;">Order #${escapeHTML(o.orderId)}</span>
+                        <span class="status-pill">${escapeHTML(o.status)}</span>
+                    </div>
+                    <div style="font-size:12px;color:var(--text-muted);">Items: ${o.itemsCount} | Total: <strong style="color:var(--dark-black);">PKR ${Number(o.total).toLocaleString()}${o.delivery === null ? ' + delivery to be confirmed' : ''}</strong></div>
+                    <div style="font-size:11px;margin-top:5px;">Tracking ID: <b>${escapeHTML(o.trackingId || o.orderId)}</b></div>
+                    <div style="font-size:11px;margin-top:3px;color:var(--text-muted);">Payment: ${escapeHTML(o.paymentMethod || 'COD')} | ${escapeHTML(o.createdAt || '')}</div>
+                </div>
+            `).join('');
+        }
+
+        function submitQuote() {
+            const qty = document.getElementById('quote-qty').value;
+            const phone = document.getElementById('quote-phone').value;
+            if (!qty || !phone) {
+                showToast("Enter quantity & WhatsApp number");
+                return;
+            }
+            showToast("Quote Request Sent!");
+            navigateTo('page-home', 0);
+        }
+
+        function switchAuthView(viewName) {
+            document.getElementById('login-form-view').style.display = viewName === 'login' ? 'block' : 'none';
+            document.getElementById('register-form-view').style.display = viewName === 'register' ? 'block' : 'none';
+            document.getElementById('forgot-form-view').style.display = viewName === 'forgot' ? 'block' : 'none';
+        }
+
+        function handleEmailLogin() {
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+            if (!email || !pass) {
+                showToast("Please enter email & password");
+                return;
+            }
+            const namePart = email.split('@')[0];
+            const formatted = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+            currentUser = {
+                name: formatted,
+                email: email,
+                dp: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231D4ED8'/><text x='50' y='62' font-size='40' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>${formatted.substring(0,2).toUpperCase()}</text></svg>`
+            };
+            localStorage.setItem('hy_user_session', JSON.stringify(currentUser));
+            applyUserToUI();
+            showToast("You have logged in successfully.");
+            addNotification('Login successful', 'You have signed in to your HY STORE account.');
+        }
+
+        function handleEmailRegister() {
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const pass = document.getElementById('reg-password').value.trim();
+            if (!name || !email || !pass) {
+                showToast("Please fill all registration fields");
+                return;
+            }
+            currentUser = {
+                name: name,
+                email: email,
+                dp: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231D4ED8'/><text x='50' y='62' font-size='40' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>${name.substring(0,2).toUpperCase()}</text></svg>`
+            };
+            localStorage.setItem('hy_user_session', JSON.stringify(currentUser));
+            applyUserToUI();
+            showToast("Your account has been created successfully.");
+            addNotification('Account created', 'Your HY STORE account has been created successfully.');
+        }
+
+        function handleForgotPassword() {
+            const email = document.getElementById('forgot-email').value.trim();
+            if (!email) {
+                showToast("Please enter your account email");
+                return;
+            }
+            showToast("Password reset link sent to " + email);
+            switchAuthView('login');
+        }
+
+
+        function changeAppLanguage(lang) {
+            const supported = ['en','ur','ar','zh','es','fr','tr'];
+            if (!supported.includes(lang)) lang = 'en';
+            localStorage.setItem('hy_app_language', lang);
+            document.documentElement.lang = lang;
+            document.documentElement.dir = (lang === 'ur' || lang === 'ar') ? 'rtl' : 'ltr';
+            const note = document.getElementById('settings-save-note');
+            if (note) note.textContent = 'Language preference saved. Some app content may remain in English until translations are added.';
+        }
+        function setAppTheme(enabled) {
+            document.body.classList.toggle('dark-theme', !!enabled);
+            localStorage.setItem('hy_dark_theme', enabled ? '1' : '0');
+        }
+        function setCompactLayout(enabled) {
+            document.body.classList.toggle('compact-ui', !!enabled);
+            localStorage.setItem('hy_compact_layout', enabled ? '1' : '0');
+        }
+        function initAppPreferences() {
+            const lang = localStorage.getItem('hy_app_language') || 'en';
+            const dark = localStorage.getItem('hy_dark_theme') === '1';
+            const compact = localStorage.getItem('hy_compact_layout') === '1';
+            const languageSelect = document.getElementById('app-language');
+            const darkToggle = document.getElementById('dark-theme-toggle');
+            const compactToggle = document.getElementById('compact-layout-toggle');
+            if (languageSelect) languageSelect.value = lang;
+            if (darkToggle) darkToggle.checked = dark;
+            if (compactToggle) compactToggle.checked = compact;
+            changeAppLanguage(lang);
+            setAppTheme(dark);
+            setCompactLayout(compact);
+        }
+
+        initSavedSession();
+        initAppPreferences();
+        renderFeed(catalog);
+        renderOrdersPage();
+        renderNotifications();
+        togglePaymentDetails();
+    </script>
+
+</body></html>
