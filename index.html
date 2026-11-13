@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HY STORE OFFICIAL</title>
+    <title>HY STORE OFFICIAL - Full Working App</title>
     <style>
         :root {
             --bg-white: #FFFFFF;
-            --bg-surface: #F8F9FA;
+            --bg-surface: #F6F7F9;
             --primary-red: #E50914;
             --primary-red-light: #FFF0F1;
             --dark-black: #0B0B0B;
@@ -27,10 +27,10 @@
         body {
             background-color: var(--bg-surface);
             color: var(--text-main);
-            padding-bottom: 80px;
+            padding-bottom: 85px;
         }
 
-        /* SVG Outline Line Helpers */
+        /* Outline SVG Helpers */
         .icon-svg {
             width: 22px;
             height: 22px;
@@ -53,13 +53,27 @@
         }
 
         .icon-lg {
-            width: 44px;
-            height: 44px;
+            width: 46px;
+            height: 46px;
             stroke: var(--dark-black);
             stroke-width: 1.3;
             stroke-linecap: round;
             stroke-linejoin: round;
             fill: none;
+        }
+
+        /* Page Views System */
+        .app-page {
+            display: none;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        .app-page.active-page {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0.4; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Top Sticky Header */
@@ -89,6 +103,7 @@
             letter-spacing: 0.4px;
             margin-right: 14px;
             white-space: nowrap;
+            cursor: pointer;
         }
         .brand-badge span { color: var(--primary-red); }
 
@@ -179,7 +194,7 @@
             cursor: pointer;
         }
 
-        /* Quick Action Cards */
+        /* Quick Actions */
         .quick-actions {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -198,6 +213,7 @@
             gap: 8px;
             cursor: pointer;
         }
+        .action-card:active { background-color: var(--bg-surface); }
 
         .action-icon {
             width: 32px;
@@ -324,13 +340,14 @@
 
         .product-img-box {
             width: 100%;
-            height: 160px;
+            height: 155px;
             background-color: #FAFAFA;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
         }
 
         .lens-btn {
@@ -362,6 +379,7 @@
             justify-content: center;
             color: var(--text-muted);
             cursor: pointer;
+            z-index: 3;
         }
         .save-card-btn.saved {
             color: var(--primary-red);
@@ -389,6 +407,7 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .price-row {
@@ -423,7 +442,247 @@
             cursor: pointer;
         }
 
-        /* Bottom App Navigation Bar (Home, Catalog, Cart, Saved, Profile with Red Active Accent)[span_4](start_span)[span_4](end_span)[span_5](start_span)[span_5](end_span) */
+        /* Sub-Pages Styling (Catalog, Cart, Saved, Profile, Product Detail, Quote) */
+        .subpage-header {
+            background: var(--bg-white);
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .back-btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--dark-black);
+        }
+
+        .subpage-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--dark-black);
+        }
+
+        .page-container {
+            padding: 14px;
+        }
+
+        /* Catalog Categories Grid */
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .cat-box {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 18px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .cat-box:active { border-color: var(--primary-red); }
+
+        .cat-icon-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--primary-red-light);
+            color: var(--primary-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Product Detail & Custom Photo Studio */
+        .detail-preview-box {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            height: 240px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+
+        .uploaded-preview-img {
+            max-width: 140px;
+            max-height: 140px;
+            border-radius: 8px;
+            border: 2px dashed var(--primary-red);
+            object-fit: cover;
+            display: none;
+            margin-top: 8px;
+        }
+
+        .form-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--dark-black);
+        }
+
+        .text-field {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+        .text-field:focus { border-color: var(--primary-red); }
+
+        .primary-btn {
+            width: 100%;
+            background: var(--primary-red);
+            color: var(--bg-white);
+            border: none;
+            padding: 13px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .outline-btn {
+            width: 100%;
+            background: var(--bg-white);
+            color: var(--dark-black);
+            border: 1.5px solid var(--dark-black);
+            padding: 11px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* Cart Items & Qty */
+        .cart-item-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .qty-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-surface);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Profile & Order History */
+        .profile-banner {
+            background: var(--dark-black);
+            color: var(--bg-white);
+            border-radius: 14px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .avatar-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--primary-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .order-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .status-pill {
+            background: var(--primary-red-light);
+            color: var(--primary-red);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark-black);
+            color: var(--bg-white);
+            padding: 9px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 500;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+
+        /* Bottom App Navigation Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -480,155 +739,276 @@
             z-index: 160;
             pointer-events: none;
         }
-
-        /* Cart Bottom Sheet */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.45);
-            z-index: 300;
-            justify-content: flex-end;
-            flex-direction: column;
-        }
-
-        .sheet-content {
-            background: var(--bg-white);
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            padding: 20px;
-            max-height: 82vh;
-            overflow-y: auto;
-        }
-
-        .sheet-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-light);
-            margin-bottom: 12px;
-        }
-
-        .cart-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        .checkout-cta {
-            width: 100%;
-            background-color: var(--primary-red);
-            color: var(--bg-white);
-            border: none;
-            padding: 14px;
-            border-radius: 25px;
-            font-size: 14px;
-            font-weight: 700;
-            margin-top: 16px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Top App Header -->
-    <header class="app-header">
-        <div class="top-tabs">
-            <div class="brand-badge">HY <span>STORE</span></div>
-            <div class="tab-list">
-                <div class="top-tab active" onclick="switchTopTab(this)">Products</div>
-                <div class="top-tab" onclick="switchTopTab(this)">Custom Studio</div>
-                <div class="top-tab" onclick="switchTopTab(this)">Bulk Orders</div>
-                <div class="top-tab" onclick="switchTopTab(this)">New</div>
-            </div>
-        </div>
+    <!-- Toast Message -->
+    <div class="toast" id="app-toast">Added to Cart</div>
 
-        <div class="search-container">
-            <button class="img-search-btn" onclick="alert('Select a photo to preview on Mug or Frame')">
-                <svg class="icon-sm" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                Photo
-            </button>
-            <input type="text" class="search-input" id="search-box" placeholder="Search mugs, frames..." onkeyup="searchProducts()">
-            <button class="mic-btn" onclick="alert('Voice search active')">
-                <svg class="icon-sm" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-            </button>
-            <button class="search-submit-btn" onclick="searchProducts()">Search</button>
-        </div>
-    </header>
-
-    <!-- Quick Actions -->
-    <section class="quick-actions">
-        <div class="action-card" onclick="filterItems('All')">
-            <div class="action-icon">
-                <svg class="icon-sm" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            </div>
-            <div class="action-text">Design<br>Your Mug</div>
-        </div>
-        <div class="action-card" onclick="alert('Request wholesale gift quote')">
-            <div class="action-icon">
-                <svg class="icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-            </div>
-            <div class="action-text">Request<br>Quote</div>
-        </div>
-        <div class="action-card" onclick="filterItems('Deals')">
-            <div class="action-icon">
-                <svg class="icon-sm" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-            </div>
-            <div class="action-text">Top<br>Ranking</div>
-        </div>
-    </section>
-
-    <!-- Trust Banner -->
-    <section class="trust-banner-wrap">
-        <div class="trust-banner">
-            <div class="trust-item">
-                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                <div>
-                    <div class="trust-title">FREE shipping</div>
-                    <div class="trust-sub">on your first order</div>
+    <!-- ==================== PAGE 1: HOME ==================== -->
+    <div id="page-home" class="app-page active-page">
+        <header class="app-header">
+            <div class="top-tabs">
+                <div class="brand-badge" onclick="navigateTo('page-home', 0)">HY <span>STORE</span></div>
+                <div class="tab-list">
+                    <div class="top-tab active" onclick="switchTopTab(this); filterItems('All')">Products</div>
+                    <div class="top-tab" onclick="switchTopTab(this); openProductDetail(1)">Custom Studio</div>
+                    <div class="top-tab" onclick="switchTopTab(this); navigateTo('page-quote')">Bulk Orders</div>
+                    <div class="top-tab" onclick="switchTopTab(this); filterItems('SALE')">New</div>
                 </div>
             </div>
-            <div class="trust-divider"></div>
-            <div class="trust-item">
-                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-                <div>
-                    <div class="trust-title">Safe Printing</div>
-                    <div class="trust-sub">Breakage replacement</div>
+
+            <div class="search-container">
+                <button class="img-search-btn" onclick="openProductDetail(1)">
+                    <svg class="icon-sm" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    Photo
+                </button>
+                <input type="text" class="search-input" id="search-box" placeholder="Search mugs, frames..." onkeyup="searchProducts()">
+                <button class="mic-btn" onclick="simulateVoiceSearch()">
+                    <svg class="icon-sm" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                </button>
+                <button class="search-submit-btn" onclick="searchProducts()">Search</button>
+            </div>
+        </header>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <div class="action-card" onclick="openProductDetail(1)">
+                <div class="action-icon">
+                    <svg class="icon-sm" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </div>
+                <div class="action-text">Design<br>Your Mug</div>
+            </div>
+            <div class="action-card" onclick="navigateTo('page-quote')">
+                <div class="action-icon">
+                    <svg class="icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                </div>
+                <div class="action-text">Request<br>Quote</div>
+            </div>
+            <div class="action-card" onclick="filterItems('Deals')">
+                <div class="action-icon">
+                    <svg class="icon-sm" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                </div>
+                <div class="action-text">Top<br>Ranking</div>
+            </div>
+        </section>
+
+        <!-- Trust Banner -->
+        <section class="trust-banner-wrap">
+            <div class="trust-banner">
+                <div class="trust-item">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                    <div>
+                        <div class="trust-title">FREE shipping</div>
+                        <div class="trust-sub">on your first order</div>
+                    </div>
+                </div>
+                <div class="trust-divider"></div>
+                <div class="trust-item">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                    <div>
+                        <div class="trust-title">Safe Printing</div>
+                        <div class="trust-sub">Breakage replacement</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filter Chips -->
+        <section class="filter-bar">
+            <div class="chip active" onclick="filterItems('All', this)">All</div>
+            <div class="chip" onclick="filterItems('SALE', this)">SALE</div>
+            <div class="chip" onclick="filterItems('Deals', this)">Top Deals</div>
+            <div class="chip" onclick="filterItems('Mugs', this)">Magic Mugs</div>
+            <div class="chip" onclick="filterItems('Frames', this)">LED Frames</div>
+        </section>
+
+        <!-- Product Grid -->
+        <main class="product-grid" id="product-feed"></main>
+    </div>
+
+    <!-- ==================== PAGE 2: CATALOG ==================== -->
+    <div id="page-catalog" class="app-page">
+        <div class="subpage-header">
+            <div class="subpage-title">Product Catalog</div>
+        </div>
+        <div class="page-container">
+            <div class="cat-grid">
+                <div class="cat-box" onclick="selectCatalogCategory('Mugs')">
+                    <div class="cat-icon-circle">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg>
+                    </div>
+                    <div style="font-weight:700; font-size:14px;">Magic & Ceramic Mugs</div>
+                    <div style="font-size:11px; color:var(--text-muted);">Heat sensitive & color mugs</div>
+                </div>
+
+                <div class="cat-box" onclick="selectCatalogCategory('Frames')">
+                    <div class="cat-icon-circle">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </div>
+                    <div style="font-weight:700; font-size:14px;">LED & Wooden Frames</div>
+                    <div style="font-size:11px; color:var(--text-muted);">Acrylic glow & rotating lamps</div>
+                </div>
+
+                <div class="cat-box" onclick="selectCatalogCategory('SALE')">
+                    <div class="cat-icon-circle">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    </div>
+                    <div style="font-weight:700; font-size:14px;">Flash Sale Offers</div>
+                    <div style="font-size:11px; color:var(--text-muted);">Up to 20% off custom gifts</div>
+                </div>
+
+                <div class="cat-box" onclick="navigateTo('page-quote')">
+                    <div class="cat-icon-circle">
+                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    </div>
+                    <div style="font-weight:700; font-size:14px;">Wholesale & Bulk</div>
+                    <div style="font-size:11px; color:var(--text-muted);">Plain sublimation boxes</div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Filter Chips -->
-    <section class="filter-bar">
-        <div class="chip active" onclick="filterItems('All', this)">All</div>
-        <div class="chip" onclick="filterItems('SALE', this)">SALE</div>
-        <div class="chip" onclick="filterItems('Deals', this)">Top Deals</div>
-        <div class="chip" onclick="filterItems('Mugs', this)">Magic Mugs</div>
-        <div class="chip" onclick="filterItems('Frames', this)">LED Frames</div>
-    </section>
+    <!-- ==================== PAGE 3: CART & CHECKOUT ==================== -->
+    <div id="page-cart" class="app-page">
+        <div class="subpage-header">
+            <div class="subpage-title">Shopping Cart (<span id="cart-page-count">0</span>)</div>
+        </div>
+        <div class="page-container">
+            <div id="cart-items-list"></div>
 
-    <!-- Product Grid -->
-    <main class="product-grid" id="product-feed">
-        <!-- Rendered by JavaScript -->
-    </main>
+            <div id="checkout-section" style="display:none;">
+                <div class="form-card">
+                    <div style="display:flex; justify-content:space-between; font-weight:800; font-size:15px; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid var(--border-light);">
+                        <span>Total Bill:</span>
+                        <span style="color:var(--primary-red);" id="cart-page-total">PKR 0</span>
+                    </div>
 
-    <!-- Bottom App Navigation Bar (Home, Catalog, Cart, Saved, Profile with Red Accent)[span_6](start_span)[span_6](end_span)[span_7](start_span)[span_7](end_span) -->
+                    <label class="input-label">Full Name</label>
+                    <input type="text" id="cust-name" class="text-field" placeholder="Enter your name">
+
+                    <label class="input-label">Phone / WhatsApp Number</label>
+                    <input type="tel" id="cust-phone" class="text-field" placeholder="03XX-XXXXXXX">
+
+                    <label class="input-label">Delivery Address & City</label>
+                    <input type="text" id="cust-address" class="text-field" placeholder="House #, Street, City">
+
+                    <button class="primary-btn" onclick="submitOrder()">Confirm & Place Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 4: SAVED WISHLIST ==================== -->
+    <div id="page-saved" class="app-page">
+        <div class="subpage-header">
+            <div class="subpage-title">Saved Items</div>
+        </div>
+        <div class="page-container" style="padding: 12px 0;">
+            <div class="product-grid" id="saved-feed"></div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 5: PROFILE & ORDERS ==================== -->
+    <div id="page-profile" class="app-page">
+        <div class="subpage-header">
+            <div class="subpage-title">My Account</div>
+        </div>
+        <div class="page-container">
+            <div class="profile-banner">
+                <div class="avatar-circle">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.8 3.6-6.5 8-6.5s8 2.7 8 6.5"/></svg>
+                </div>
+                <div>
+                    <div style="font-weight:800; font-size:16px;" id="profile-user-name">HY Store Customer</div>
+                    <div style="font-size:12px; color:#BBBBBB;">Mandi Bahauddin / Pakistan</div>
+                </div>
+            </div>
+
+            <div style="font-weight:800; font-size:14px; margin-bottom:10px;">My Recent Orders</div>
+            <div id="order-history-list">
+                <div class="form-card" style="text-align:center; color:var(--text-muted); font-size:13px;">
+                    No orders placed yet. Add items to cart to place your first order!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 6: PRODUCT DETAIL & CUSTOM PHOTO STUDIO ==================== -->
+    <div id="page-detail" class="app-page">
+        <div class="subpage-header">
+            <button class="back-btn" onclick="navigateTo('page-home', 0)">
+                <svg class="icon-sm" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="subpage-title">Product & Custom Studio</div>
+        </div>
+        <div class="page-container">
+            <div class="detail-preview-box">
+                <div id="detail-sketch-container"></div>
+                <img id="custom-photo-preview" class="uploaded-preview-img" alt="Your Photo Preview">
+                <div id="custom-text-preview" style="font-size:12px; font-weight:700; color:var(--primary-red); margin-top:6px;"></div>
+            </div>
+
+            <div class="form-card">
+                <div id="detail-title" style="font-size:16px; font-weight:800; margin-bottom:4px;"></div>
+                <div id="detail-price" style="font-size:18px; font-weight:900; color:var(--primary-red); margin-bottom:6px;"></div>
+                <div id="detail-moq" style="font-size:12px; color:var(--text-muted); margin-bottom:14px;"></div>
+
+                <label class="input-label">1. Upload Photo for Printing (Optional)</label>
+                <input type="file" id="photo-upload-input" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
+                <button class="outline-btn" onclick="document.getElementById('photo-upload-input').click()">
+                    <svg class="icon-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Choose Photo from Gallery
+                </button>
+
+                <label class="input-label">2. Custom Name / Message on Gift</label>
+                <input type="text" id="custom-note-input" class="text-field" placeholder="e.g. Happy Birthday Ali" onkeyup="updateCustomTextPreview()">
+
+                <button class="primary-btn" id="detail-add-cart-btn">Add Customized Item to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 7: REQUEST BULK QUOTE ==================== -->
+    <div id="page-quote" class="app-page">
+        <div class="subpage-header">
+            <button class="back-btn" onclick="navigateTo('page-home', 0)">
+                <svg class="icon-sm" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="subpage-title">Request Wholesale Quote</div>
+        </div>
+        <div class="page-container">
+            <div class="form-card">
+                <label class="input-label">Product Type</label>
+                <select id="quote-product" class="text-field">
+                    <option>Magic Photo Mugs (Bulk)</option>
+                    <option>Plain White Sublimation Mugs</option>
+                    <option>Acrylic LED Photo Frames</option>
+                    <option>Corporate / Event Gift Boxes</option>
+                </select>
+
+                <label class="input-label">Required Quantity (Pieces)</label>
+                <input type="number" id="quote-qty" class="text-field" placeholder="e.g. 50">
+
+                <label class="input-label">Your WhatsApp Number</label>
+                <input type="tel" id="quote-phone" class="text-field" placeholder="03XX-XXXXXXX">
+
+                <button class="primary-btn" onclick="submitQuote()">Submit Quote Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== BOTTOM NAVIGATION BAR ==================== -->
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="setActiveNav(this); filterItems('All'); window.scrollTo({top: 0, behavior: 'smooth'})">
+        <div class="nav-item active" onclick="navigateTo('page-home', 0)">
             <svg class="icon-svg" viewBox="0 0 24 24">
                 <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"/>
             </svg>
             <span>Home</span>
         </div>
 
-        <div class="nav-item" onclick="setActiveNav(this); filterItems('Mugs')">
+        <div class="nav-item" onclick="navigateTo('page-catalog', 1)">
             <svg class="icon-svg" viewBox="0 0 24 24">
                 <circle cx="6.5" cy="6.5" r="3"/>
                 <line x1="8.8" y1="8.8" x2="10.5" y2="10.5"/>
@@ -639,7 +1019,7 @@
             <span>Catalog</span>
         </div>
 
-        <div class="nav-item" onclick="setActiveNav(this); openCart()">
+        <div class="nav-item" onclick="navigateTo('page-cart', 2)">
             <svg class="icon-svg" viewBox="0 0 24 24">
                 <circle cx="9" cy="20" r="1.5"/>
                 <circle cx="18" cy="20" r="1.5"/>
@@ -649,14 +1029,14 @@
             <span>Cart</span>
         </div>
 
-        <div class="nav-item" onclick="setActiveNav(this); showSavedItems()">
+        <div class="nav-item" onclick="navigateTo('page-saved', 3)">
             <svg class="icon-svg" viewBox="0 0 24 24">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
             <span>Saved</span>
         </div>
 
-        <div class="nav-item" onclick="setActiveNav(this); alert('Account & Order Tracking')">
+        <div class="nav-item" onclick="navigateTo('page-profile', 4)">
             <svg class="icon-svg" viewBox="0 0 24 24">
                 <circle cx="12" cy="8" r="4"/>
                 <path d="M4 20c0-3.8 3.6-6.5 8-6.5s8 2.7 8 6.5"/>
@@ -666,29 +1046,11 @@
     </nav>
     <div class="gesture-bar"></div>
 
-    <!-- Cart Bottom Sheet -->
-    <div class="modal-overlay" id="cart-modal" onclick="closeCartOutside(event)">
-        <div class="sheet-content">
-            <div class="sheet-header">
-                <h3 style="font-size: 16px; font-weight: 700;">Shopping Cart (<span id="sheet-count">0</span>)</h3>
-                <button onclick="closeCart()" style="background:none; border:none; font-size:22px; cursor:pointer; color:#111;">&times;</button>
-            </div>
-            <div id="cart-list">
-                <p style="text-align:center; color:#777; padding:25px 0; font-size:13px;">Your cart is empty.</p>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-top:15px; font-weight:700; font-size:15px;">
-                <span>Total Payable:</span>
-                <span style="color:var(--primary-red);" id="cart-total-price">PKR 0</span>
-            </div>
-            <button class="checkout-cta" onclick="placeOrder()">Proceed to Order</button>
-        </div>
-    </div>
-
     <script>
         const svgIcons = {
             mug: `<svg class="icon-lg" viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>`,
             frame: `<svg class="icon-lg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
-            gift: `<svg class="icon-lg" viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7 z"/></svg>`,
+            gift: `<svg class="icon-lg" viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>`,
             box: `<svg class="icon-lg" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`
         };
 
@@ -702,51 +1064,71 @@
         ];
 
         let cart = [];
+        let orders = [];
+
+        function showToast(msg) {
+            const toast = document.getElementById('app-toast');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+        }
+
+        // Page Navigation Controller
+        function navigateTo(pageId, navIndex = -1) {
+            document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active-page'));
+            document.getElementById(pageId).classList.add('active-page');
+
+            if (navIndex >= 0) {
+                document.querySelectorAll('.nav-item').forEach((n, idx) => {
+                    n.classList.toggle('active', idx === navIndex);
+                });
+            }
+
+            if (pageId === 'page-cart') renderCartPage();
+            if (pageId === 'page-saved') renderSavedPage();
+            if (pageId === 'page-profile') renderOrdersPage();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render Product Cards
+        function createCardHTML(item) {
+            const badgeHTML = item.badge ? `<div class="badge-tag">${item.badge}</div>` : '';
+            return `
+                <div class="product-card">
+                    ${badgeHTML}
+                    <button class="save-card-btn ${item.saved ? 'saved' : ''}" onclick="toggleSave(${item.id})">
+                        <svg class="icon-sm" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </button>
+                    <div class="product-img-box" onclick="openProductDetail(${item.id})">
+                        ${svgIcons[item.sketch]}
+                        <div class="lens-btn">
+                            <svg class="icon-sm" style="width:13px;height:13px;" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></svg>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title" onclick="openProductDetail(${item.id})">${item.title}</div>
+                        <div class="price-row">
+                            <div>
+                                <div class="product-price">PKR ${item.price.toLocaleString()}</div>
+                                <div class="moq-text">MOQ: ${item.moq}</div>
+                            </div>
+                            <button class="quick-add-btn" onclick="addToCart(${item.id})">
+                                <svg class="icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
         function renderFeed(items) {
             const feed = document.getElementById('product-feed');
-            feed.innerHTML = '';
-
             if (items.length === 0) {
-                feed.innerHTML = '<p style="grid-column: span 2; text-align:center; color:#777; padding:40px 0; font-size:13px;">No items found.</p>';
+                feed.innerHTML = '<p style="grid-column: span 2; text-align:center; color:#777; padding:40px 0; font-size:13px;">No products found.</p>';
                 return;
             }
-
-            items.forEach(item => {
-                const badgeHTML = item.badge ? `<div class="badge-tag">${item.badge}</div>` : '';
-
-                feed.innerHTML += `
-                    <div class="product-card">
-                        ${badgeHTML}
-                        <button class="save-card-btn ${item.saved ? 'saved' : ''}" onclick="toggleSave(${item.id}, this)">
-                            <svg class="icon-sm" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                        </button>
-                        <div class="product-img-box">
-                            ${svgIcons[item.sketch]}
-                            <div class="lens-btn" title="Preview photo">
-                                <svg class="icon-sm" style="width:13px;height:13px;" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></svg>
-                            </div>
-                        </div>
-                        <div class="product-details">
-                            <div class="product-title">${item.title}</div>
-                            <div class="price-row">
-                                <div>
-                                    <div class="product-price">PKR ${item.price.toLocaleString()}</div>
-                                    <div class="moq-text">MOQ: ${item.moq}</div>
-                                </div>
-                                <button class="quick-add-btn" onclick="addToCart(${item.id})">
-                                    <svg class="icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function setActiveNav(el) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
+            feed.innerHTML = items.map(createCardHTML).join('');
         }
 
         function switchTopTab(el) {
@@ -767,15 +1149,9 @@
             }
         }
 
-        function toggleSave(id, btn) {
-            const product = catalog.find(p => p.id === id);
-            product.saved = !product.saved;
-            btn.classList.toggle('saved');
-        }
-
-        function showSavedItems() {
-            const saved = catalog.filter(p => p.saved);
-            renderFeed(saved);
+        function selectCatalogCategory(cat) {
+            navigateTo('page-home', 0);
+            filterItems(cat);
         }
 
         function searchProducts() {
@@ -784,68 +1160,192 @@
             renderFeed(filtered);
         }
 
-        function addToCart(id) {
-            const product = catalog.find(p => p.id === id);
-            cart.push(product);
-            updateCart();
+        function simulateVoiceSearch() {
+            document.getElementById('search-box').value = "Magic";
+            searchProducts();
+            showToast("Showing results for 'Magic'");
         }
 
-        function updateCart() {
-            document.getElementById('nav-cart-count').innerText = cart.length;
-            document.getElementById('sheet-count').innerText = cart.length;
+        // Wishlist Toggle
+        function toggleSave(id) {
+            const product = catalog.find(p => p.id === id);
+            product.saved = !product.saved;
+            renderFeed(catalog);
+            renderSavedPage();
+            showToast(product.saved ? "Saved to Wishlist" : "Removed from Wishlist");
+        }
 
-            const list = document.getElementById('cart-list');
-            if (cart.length === 0) {
-                list.innerHTML = '<p style="text-align:center; color:#777; padding:25px 0; font-size:13px;">Your cart is empty.</p>';
-                document.getElementById('cart-total-price').innerText = 'PKR 0';
+        function renderSavedPage() {
+            const savedList = catalog.filter(p => p.saved);
+            const container = document.getElementById('saved-feed');
+            if (savedList.length === 0) {
+                container.innerHTML = '<p style="grid-column: span 2; text-align:center; color:#777; padding:50px 20px; font-size:13px;">No saved items yet. Tap the heart icon on any product to save it here.</p>';
                 return;
             }
+            container.innerHTML = savedList.map(createCardHTML).join('');
+        }
 
-            let html = '';
-            let total = 0;
-            cart.forEach((item, idx) => {
-                total += item.price;
-                html += `
-                    <div class="cart-row">
-                        <div style="max-width:75%;">
-                            <div style="font-size:13px; font-weight:600;">${item.title}</div>
-                            <div style="font-size:12px; color:var(--primary-red); font-weight:700;">PKR ${item.price.toLocaleString()}</div>
-                        </div>
-                        <button onclick="removeItem(${idx})" style="background:none; border:none; color:#777; font-size:12px; font-weight:600; cursor:pointer;">Remove</button>
+        // Product Detail & Custom Studio
+        function openProductDetail(id) {
+            const product = catalog.find(p => p.id === id) || catalog[0];
+            document.getElementById('detail-sketch-container').innerHTML = svgIcons[product.sketch];
+            document.getElementById('detail-title').innerText = product.title;
+            document.getElementById('detail-price').innerText = `PKR ${product.price.toLocaleString()}`;
+            document.getElementById('detail-moq').innerText = `Minimum Order: ${product.moq}`;
+
+            // Reset custom inputs
+            document.getElementById('custom-photo-preview').style.display = 'none';
+            document.getElementById('custom-note-input').value = '';
+            document.getElementById('custom-text-preview').innerText = '';
+
+            document.getElementById('detail-add-cart-btn').onclick = () => {
+                const note = document.getElementById('custom-note-input').value.trim();
+                addToCart(product.id, note);
+                navigateTo('page-cart', 2);
+            };
+
+            navigateTo('page-detail');
+        }
+
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('custom-photo-preview');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    showToast("Photo attached to preview");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateCustomTextPreview() {
+            const txt = document.getElementById('custom-note-input').value;
+            document.getElementById('custom-text-preview').innerText = txt ? `Print Text: "${txt}"` : '';
+        }
+
+        // Cart Management
+        function addToCart(id, customNote = "") {
+            const product = catalog.find(p => p.id === id);
+            const existing = cart.find(c => c.id === id && c.customNote === customNote);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1, customNote });
+            }
+            updateCartBadge();
+            showToast("Added to Cart");
+        }
+
+        function updateCartBadge() {
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('nav-cart-count').innerText = totalQty;
+            document.getElementById('cart-page-count').innerText = totalQty;
+        }
+
+        function changeQty(index, delta) {
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartBadge();
+            renderCartPage();
+        }
+
+        function renderCartPage() {
+            const list = document.getElementById('cart-items-list');
+            const checkoutSec = document.getElementById('checkout-section');
+
+            if (cart.length === 0) {
+                list.innerHTML = `
+                    <div class="form-card" style="text-align:center; padding:40px 20px;">
+                        <p style="color:var(--text-muted); font-size:13px; margin-bottom:14px;">Your shopping cart is empty.</p>
+                        <button class="primary-btn" style="max-width:200px; margin:0 auto;" onclick="navigateTo('page-home', 0)">Browse Products</button>
                     </div>
                 `;
-            });
-
-            list.innerHTML = html;
-            document.getElementById('cart-total-price').innerText = 'PKR ' + total.toLocaleString();
-        }
-
-        function removeItem(idx) {
-            cart.splice(idx, 1);
-            updateCart();
-        }
-
-        function openCart() {
-            document.getElementById('cart-modal').style.display = 'flex';
-        }
-
-        function closeCart() {
-            document.getElementById('cart-modal').style.display = 'none';
-        }
-
-        function closeCartOutside(e) {
-            if (e.target.id === 'cart-modal') closeCart();
-        }
-
-        function placeOrder() {
-            if (cart.length === 0) {
-                alert("Please add items to your cart first.");
+                checkoutSec.style.display = 'none';
                 return;
             }
-            alert("Thank you! Your order on HY STORE OFFICIAL is confirmed.");
+
+            let total = 0;
+            list.innerHTML = cart.map((item, idx) => {
+                total += item.price * item.qty;
+                const noteHTML = item.customNote ? `<div style="font-size:11px; color:var(--primary-red); margin-top:2px;">Custom Note: ${item.customNote}</div>` : '';
+                return `
+                    <div class="cart-item-card">
+                        <div style="max-width:68%;">
+                            <div style="font-size:13px; font-weight:700;">${item.title}</div>
+                            ${noteHTML}
+                            <div style="font-size:13px; font-weight:800; color:var(--primary-red); margin-top:4px;">PKR ${(item.price * item.qty).toLocaleString()}</div>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="changeQty(${idx}, -1)">-</button>
+                                <span style="font-size:13px; font-weight:700;">${item.qty}</span>
+                                <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+                            </div>
+                        </div>
+                        <button onclick="changeQty(${idx}, -99)" style="background:none; border:none; color:var(--text-muted); font-size:12px; font-weight:600; cursor:pointer;">Remove</button>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('cart-page-total').innerText = `PKR ${total.toLocaleString()}`;
+            checkoutSec.style.display = 'block';
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('cust-name').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const address = document.getElementById('cust-address').value.trim();
+
+            if (!name || !phone || !address) {
+                showToast("Please fill Name, Phone & Address");
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const newOrder = {
+                orderId: "HY-" + Math.floor(1000 + Math.random() * 9000),
+                customer: name,
+                itemsCount: cart.reduce((sum, item) => sum + item.qty, 0),
+                total: total,
+                status: "Order Confirmed"
+            };
+
+            orders.unshift(newOrder);
+            document.getElementById('profile-user-name').innerText = name;
+
             cart = [];
-            updateCart();
-            closeCart();
+            updateCartBadge();
+            showToast("Order Placed Successfully!");
+            navigateTo('page-profile', 4);
+        }
+
+        function renderOrdersPage() {
+            const container = document.getElementById('order-history-list');
+            if (orders.length === 0) return;
+
+            container.innerHTML = orders.map(o => `
+                <div class="order-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <span style="font-weight:800; font-size:13px;">Order #${o.orderId}</span>
+                        <span class="status-pill">${o.status}</span>
+                    </div>
+                    <div style="font-size:12px; color:var(--text-muted);">Items: ${o.itemsCount} | Total: <strong style="color:var(--dark-black);">PKR ${o.total.toLocaleString()}</strong></div>
+                </div>
+            `).join('');
+        }
+
+        function submitQuote() {
+            const qty = document.getElementById('quote-qty').value;
+            const phone = document.getElementById('quote-phone').value;
+            if (!qty || !phone) {
+                showToast("Enter quantity & WhatsApp number");
+                return;
+            }
+            showToast("Quote Request Sent!");
+            navigateTo('page-home', 0);
         }
 
         // Initial Load
