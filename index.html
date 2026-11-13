@@ -490,6 +490,8 @@
             fill: var(--primary-red);
         }
 
+        .product-img-box img { display:block; max-width:100%; max-height:100%; object-fit:contain; }
+
         .product-details {
             padding: 10px;
             display: flex;
@@ -1567,7 +1569,8 @@
             <div class="form-card">
                 <div id="detail-title" style="font-size:16px; font-weight:800; margin-bottom:4px;"></div>
                 <div id="detail-price" style="font-size:18px; font-weight:900; color:var(--primary-red); margin-bottom:6px;"></div>
-                <div id="detail-moq" style="font-size:12px; color:var(--text-muted); margin-bottom:14px;"></div>
+                <div id="detail-moq" style="font-size:12px; color:var(--text-muted); margin-bottom:8px;"></div>
+                <div id="detail-description" style="font-size:13px;line-height:1.65;color:var(--text-muted);white-space:pre-wrap;margin:0 0 16px;"></div>
                 <label class="input-label">1. Upload Photo for Printing (Optional)</label>
                 <input type="file" id="photo-upload-input" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
                 <button class="outline-btn" onclick="document.getElementById('photo-upload-input').click()">
@@ -1720,14 +1723,8 @@
             box: `<svg class="icon-lg" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`
         };
 
-        const catalog = [
-            { id: 1, title: "Heat Sensitive Magic Photo Mug (Black Matte)", price: 1150, moq: "1 piece", category: "Mugs", tag: "SALE", badge: "LIVE", badgeColor: "red", sketch: "mug", saved: false },
-            { id: 2, title: "Personalized Acrylic LED Couple Glow Frame", price: 2450, moq: "1 piece", category: "Frames", tag: "Deals", badge: "HOT", badgeColor: "blue", sketch: "frame", saved: false },
-            { id: 3, title: "Sublimation White Ceramic Gift Mug + Box", price: 790, moq: "1 piece", category: "Mugs", tag: "SALE", badge: "-20%", badgeColor: "red", sketch: "gift", saved: false },
-            { id: 4, title: "Heart Handle Inner Red Custom Printed Mug", price: 1050, moq: "1 piece", category: "Mugs", tag: "Deals", badge: "", badgeColor: "red", sketch: "mug", saved: false },
-            { id: 5, title: "Wooden Rotating Photo Cube Lamp Frame", price: 3200, moq: "1 piece", category: "Frames", tag: "SALE", badge: "NEW", badgeColor: "blue", sketch: "frame", saved: false },
-            { id: 6, title: "Wholesale Plain Sublimation Mugs (Box of 36)", price: 280, moq: "36 pieces", category: "Mugs", tag: "Deals", badge: "BULK", badgeColor: "blue", sketch: "box", saved: false }
-        ];
+        // Products are loaded only from Google Sheets; no demo products are shown.
+        const catalog = [];
 
         let cart = [];
         let orders = JSON.parse(localStorage.getItem('hy_store_orders') || '[]');
@@ -1739,7 +1736,19 @@
         }
         function saveAccountCart() {
             if (currentUser && currentUser.email) {
-                localStorage.setItem(accountCartKey(currentUser.email), JSON.stringify(cart));
+                // Keep customer-uploaded Base64 photos in the live cart only.
+                // Saving large photos in localStorage can exceed its quota and stop
+                // the Add to Cart flow before the app navigates to the cart.
+                const cartForStorage = cart.map(({ customImage, ...item }) => ({
+                    ...item,
+                    customImage: ''
+                }));
+                try {
+                    localStorage.setItem(accountCartKey(currentUser.email), JSON.stringify(cartForStorage));
+                } catch (error) {
+                    console.warn('Cart could not be fully saved to local storage:', error);
+                    // The current in-memory cart remains usable for checkout.
+                }
             }
         }
         function loadAccountCart() {
@@ -2055,7 +2064,7 @@
                         <svg class="icon-sm" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     </button>
                     <div class="product-img-box" onclick="openProductDetail(${item.id})">
-                        ${svgIcons[item.sketch]}
+                        ${item.image ? `<img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.title)}" style="width:100%;height:100%;object-fit:contain;border-radius:12px;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span style="display:none;">${svgIcons[item.sketch] || svgIcons.gift}</span>` : (svgIcons[item.sketch] || svgIcons.gift)}
                         <div class="lens-btn">
                             <svg class="icon-sm" style="width:13px;height:13px;" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></svg>
                         </div>
@@ -2232,8 +2241,12 @@
 
         function openProductDetail(id) {
             const product = catalog.find(p => p.id === id) || catalog[0];
-            document.getElementById('detail-sketch-container').innerHTML = svgIcons[product.sketch];
+            const detailVisual = document.getElementById('detail-sketch-container');
+            detailVisual.innerHTML = product.image
+                ? `<img src="${escapeHTML(product.image)}" alt="${escapeHTML(product.title)}" style="width:100%;max-height:300px;object-fit:contain;border-radius:14px;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><div style="display:none;">${svgIcons[product.sketch] || svgIcons.gift}</div>`
+                : (svgIcons[product.sketch] || svgIcons.gift);
             document.getElementById('detail-title').innerText = product.title;
+            document.getElementById('detail-description').innerText = product.description || 'No description available.';
             document.getElementById('detail-price').innerText = `PKR ${product.price.toLocaleString()}`;
             document.getElementById('detail-moq').innerText = `Minimum Order: ${product.moq}`;
             document.getElementById('custom-photo-preview').style.display = 'none';
@@ -2435,15 +2448,28 @@
                 const trackingId = 'HY-' + Date.now().toString().slice(-8);
                 const order = {
                     orderId: trackingId, trackingId, customer: name, customerEmail: currentUser.email, phone, country, province, city, district, address,
-                    items: cart.map(item => ({title:item.title, qty:item.qty, price:item.price, customNote:item.customNote || ''})),
+                    items: cart.map(item => ({
+                        title: item.title,
+                        qty: item.qty,
+                        price: item.price,
+                        customNote: item.customNote || '',
+                        image: item.image || '',
+                        // Customer-uploaded personalization photo (separate from product photo)
+                        customImage: item.customImage || ''
+                    })),
                     itemsCount: cart.reduce((sum, item) => sum + item.qty, 0),
                     subtotal, delivery, total: subtotal + (delivery || 0), paymentMethod: method,
                     paymentSender: sender, transactionId: trx, bankName, receipt: receiptData,
                     status: 'Order Confirmed', createdAt: new Date().toLocaleString()
                 };
                 orders.unshift(order);
-                localStorage.setItem('hy_store_orders', JSON.stringify(orders));
-                syncOrderWithGoogleSheet(order);
+                // Do not put large Base64 receipt images in localStorage (quota can block checkout).
+                localStorage.setItem('hy_store_orders', JSON.stringify(orders.map(({receipt, ...saved}) => ({
+                    ...saved,
+                    // Keep uploaded photos out of localStorage; they are sent to Google Sheets below.
+                    items: (saved.items || []).map(({customImage, ...item}) => item)
+                }))));
+                Promise.resolve(syncOrderWithGoogleSheet(order)).catch(err => console.error('Order sheet sync failed:', err));
                 document.getElementById('profile-user-name').innerText = name;
                 const orderEmail = String(currentUser.email || '').trim().toLowerCase();
                 // Order confirmation notification is delivered to this account after a short delay.
@@ -2472,9 +2498,19 @@
                     showToast('Receipt image must be 2 MB or smaller.'); return;
                 }
                 const reader = new FileReader();
-                reader.onload = e => setTimeout(() => finishOrder(e.target.result), 650);
+                reader.onload = e => {
+                    try { finishOrder(e.target.result || ''); }
+                    catch (error) {
+                        console.error('Could not complete online-payment order:', error);
+                        submitBtn.disabled = false; submitBtn.innerText = 'Confirm & Place Order';
+                        showToast('Order could not be completed. Please try again.');
+                    }
+                };
                 reader.onerror = () => { submitBtn.disabled = false; submitBtn.innerText = 'Confirm & Place Order'; showToast('Could not read payment receipt.'); };
-                reader.readAsDataURL(file);
+                try { reader.readAsDataURL(file); } catch (error) {
+                    submitBtn.disabled = false; submitBtn.innerText = 'Confirm & Place Order';
+                    showToast('Could not read payment receipt. Please choose it again.');
+                }
             }
         }
 
@@ -2557,6 +2593,9 @@
             const itemsSummary = (order.items || []).map(i => `${i.title} (x${i.qty})${i.customNote ? ' [Note: ' + i.customNote + ']' : ''}`).join(', ');
             const customTexts = (order.items || []).map(i => i.customNote).filter(Boolean).join(' | ');
             const firstCustomImg = ((order.items || []).find(i => i.customImage) || {}).customImage || "";
+            const customPhotoItems = (order.items || [])
+                .filter(i => i.customImage)
+                .map(i => ({ product: i.title, photoData: i.customImage }));
             const res = await callBackendAPI({
                 action: "placeOrder",
                 orderId: order.orderId,
@@ -2568,48 +2607,86 @@
                 items: itemsSummary,
                 customText: customTexts,
                 imageData: firstCustomImg,
+                // Includes every customer-uploaded personalization photo, if multiple products have one.
+                customPhotoItems: customPhotoItems,
                 total: order.total,
                 paymentMethod: order.paymentMethod,
+                paymentSender: order.paymentSender || "",
+                transactionId: order.transactionId || "",
+                bankName: order.bankName || "",
                 paymentProof: order.receipt || order.transactionId || "COD"
             });
             if (res && res.status === "success" && res.orderId) {
                 order.orderId = res.orderId;
                 order.trackingId = res.orderId;
-                localStorage.setItem('hy_store_orders', JSON.stringify(orders));
+                localStorage.setItem('hy_store_orders', JSON.stringify(orders.map(({receipt, ...saved}) => saved)));
                 document.getElementById('success-tracking-id').innerText = res.orderId;
                 renderOrdersPage();
             }
         }
 
+        function sheetCell(row, names) {
+            const entries = Object.entries(row || {});
+            for (const name of names) {
+                const found = entries.find(([key]) => String(key).trim().toLowerCase() === name.toLowerCase());
+                if (found && found[1] !== null && found[1] !== undefined && String(found[1]).trim() !== '') return found[1];
+            }
+            return '';
+        }
+
+        function normalizeProductImage(value) {
+            let url = String(value || '').trim();
+            if (!url) return '';
+            // Accept common Google Drive share links as well as direct image URLs.
+            let m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/i) || url.match(/[?&]id=([^&]+)/i);
+            if (m && m[1]) url = 'https://drive.google.com/uc?export=view&id=' + m[1];
+            if (/^https?:\/\//i.test(url) || /^data:image\//i.test(url)) return url;
+            return '';
+        }
+
         async function loadLiveProductsFromSheet() {
-            if (!CONFIG.SCRIPT_URL) return;
+            const feed = document.getElementById('product-feed');
+            if (feed) feed.innerHTML = '<p style="grid-column:span 2;text-align:center;padding:40px 0;color:#777;">Loading products...</p>';
+            if (!CONFIG.SCRIPT_URL) {
+                if (feed) feed.innerHTML = '<p style="grid-column:span 2;text-align:center;padding:40px 0;color:#777;">Google Sheets is not configured.</p>';
+                return;
+            }
             try {
-                const res = await fetch(CONFIG.SCRIPT_URL + "?action=getProducts");
-                const result = await res.json();
-                if (result && result.status === "success" && Array.isArray(result.data) && result.data.length > 0) {
-                    result.data.forEach((row, idx) => {
-                        if (row.Title || row.title) {
-                            const existing = catalog.find(p => p.title === (row.Title || row.title));
-                            if (!existing) {
-                                catalog.push({
-                                    id: catalog.length + idx + 100,
-                                    title: row.Title || row.title,
-                                    price: Number(row.Price || row.price || 1000),
-                                    moq: row.MOQ || row.moq || "1 piece",
-                                    category: row.Category || row.category || "Mugs",
-                                    tag: row.Tag || "Deals",
-                                    badge: row.Badge || "NEW",
-                                    badgeColor: "blue",
-                                    sketch: (row.Category || "").toLowerCase().includes("frame") ? "frame" : "mug",
-                                    saved: false
-                                });
-                            }
-                        }
+                const response = await fetch(CONFIG.SCRIPT_URL + '?action=getProducts', { method: 'GET', cache: 'no-store' });
+                if (!response.ok) throw new Error('Products request failed (' + response.status + ')');
+                const result = await response.json();
+                if (!result || result.status !== 'success' || !Array.isArray(result.data)) throw new Error(result && result.message ? result.message : 'Unexpected Google Sheets response');
+                const rows = result.data;
+                catalog.splice(0, catalog.length);
+                rows.forEach((row, idx) => {
+                    const title = sheetCell(row, ['Title','Product Title','Product Name','Name','title','product']);
+                    if (!title) return;
+                    const priceRaw = sheetCell(row, ['Price','Selling Price','Sale Price','price']);
+                    const price = Number(String(priceRaw || '0').replace(/[^0-9.]/g, '')) || 0;
+                    const category = sheetCell(row, ['Category','Product Category']) || 'Other';
+                    const imageRaw = sheetCell(row, ['Image','Images','Image URL','Image Link','Photo','Product Image','Product Image URL','ImageURL','Image Link URL','Photo URL','Picture','Picture URL','Product Photo','Thumbnail','imageUrl','image_url','img']);
+                    const description = sheetCell(row, ['Description','Product Description','Details','About','description']);
+                    catalog.push({
+                        id: idx + 1, title: String(title).trim(), price,
+                        moq: sheetCell(row, ['MOQ','Minimum Order Quantity','Minimum Order']) || '1 piece',
+                        category: String(category).trim(), tag: sheetCell(row, ['Tag']) || '',
+                        badge: sheetCell(row, ['Badge']) || '', badgeColor: 'blue',
+                        sketch: String(category).toLowerCase().includes('frame') ? 'frame' : 'gift',
+                        image: normalizeProductImage(imageRaw), description: String(description || '').trim(), saved: false
                     });
-                    renderFeed(catalog);
+                });
+                renderFeed(catalog);
+                // Keep the category filters aligned with the actual Sheet categories.
+                const chips = document.querySelector('.filter-bar');
+                if (chips) {
+                    const cats = [...new Set(catalog.map(p => p.category).filter(Boolean))];
+                    chips.innerHTML = `<div class="chip active" onclick="filterItems('All', this)">All</div>` + cats.map(c => `<div class="chip" onclick="filterItems(${JSON.stringify(c).replace(/"/g, '&quot;')}, this)">${escapeHTML(c)}</div>`).join('');
                 }
             } catch (e) {
-                console.warn("Using built-in catalog:", e);
+                console.error('Google Sheets products could not be loaded:', e);
+                catalog.splice(0, catalog.length);
+                if (feed) feed.innerHTML = '<p style="grid-column:span 2;text-align:center;padding:40px 20px;color:#b45309;">Could not load products from Google Sheets. Please check the Apps Script getProducts response and sharing settings.</p>';
+                showToast('Could not load Google Sheets products.');
             }
         }
 
