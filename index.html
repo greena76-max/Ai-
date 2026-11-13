@@ -1712,7 +1712,7 @@
         // =========================================================================
         const CONFIG = {
             SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwpTLbC-kZRo9Zc_G5mfYgFRjnirH_4-sEDqxTxRzEMia0gEzey9Jo9yrPmSQgw_-k4Ig/exec",
-            GOOGLE_CLIENT_ID: "" // <-- PASTE YOUR GOOGLE CLIENT ID HERE LATER
+            GOOGLE_CLIENT_ID: "21998030518-8t3hlj709qfv273nd9124eebl1uudi7r.apps.googleusercontent.com"
         };
         const GOOGLE_CLIENT_ID = CONFIG.GOOGLE_CLIENT_ID;
 
@@ -1736,19 +1736,7 @@
         }
         function saveAccountCart() {
             if (currentUser && currentUser.email) {
-                // Keep customer-uploaded Base64 photos in the live cart only.
-                // Saving large photos in localStorage can exceed its quota and stop
-                // the Add to Cart flow before the app navigates to the cart.
-                const cartForStorage = cart.map(({ customImage, ...item }) => ({
-                    ...item,
-                    customImage: ''
-                }));
-                try {
-                    localStorage.setItem(accountCartKey(currentUser.email), JSON.stringify(cartForStorage));
-                } catch (error) {
-                    console.warn('Cart could not be fully saved to local storage:', error);
-                    // The current in-memory cart remains usable for checkout.
-                }
+                localStorage.setItem(accountCartKey(currentUser.email), JSON.stringify(cart));
             }
         }
         function loadAccountCart() {
@@ -1880,26 +1868,36 @@
         }
 
         function triggerGoogleSignIn() {
-            if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID.trim() !== "" && window.google && google.accounts) {
-                google.accounts.id.initialize({
-                    client_id: GOOGLE_CLIENT_ID,
-                    callback: handleGoogleCredentialResponse
-                });
-                google.accounts.id.prompt();
-            } else {
-                openGoogleAccountPicker();
+            if (!GOOGLE_CLIENT_ID || !window.google || !google.accounts || !google.accounts.id) {
+                showToast("Google Sign-In load nahi hua. Page refresh karke dobara try karein.");
+                return;
             }
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleCredentialResponse,
+                auto_select: false
+            });
+            google.accounts.id.prompt();
         }
 
-        function handleGoogleCredentialResponse(response) {
+        async function handleGoogleCredentialResponse(response) {
             try {
-                const base64Url = response.credential.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const payload = JSON.parse(decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+                showToast("Google account verify ho raha hai...");
+                const result = await callBackendAPI({
+                    action: "googleLogin",
+                    credential: response.credential
+                });
+
+                if (!result || result.status !== "success") {
+                    showToast((result && result.message) || "Google login verify nahi ho saka.");
+                    return;
+                }
+
                 currentUser = {
-                    name: payload.name || "Google User",
-                    email: payload.email,
-                    dp: payload.picture || savedPhoneAccounts[0].dp
+                    userId: result.userId,
+                    name: result.name || "Google User",
+                    email: result.email,
+                    dp: result.picture || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23EFF6FF'/><circle cx='50' cy='38' r='18' fill='%231D4ED8'/><path d='M20 88 C20 66, 80 66, 80 88' fill='%231D4ED8'/></svg>"
                 };
                 localStorage.setItem('hy_user_session', JSON.stringify(currentUser));
                 applyUserToUI();
@@ -1908,7 +1906,8 @@
                 renderOrdersPage();
                 showToast("Signed in as " + currentUser.name);
             } catch (e) {
-                openGoogleAccountPicker();
+                console.error("Google login error:", e);
+                showToast("Google login mein masla aya. Dobara try karein.");
             }
         }
 
@@ -2180,45 +2179,58 @@
             }
         }
 
+        let hyAIHistory = [];
+
+        function appendAIChatMessage(message, isUser) {
+            const chatContainer = document.getElementById('ai-chat-messages');
+            const bubble = document.createElement('div');
+            bubble.style.cssText = isUser
+                ? "background:var(--primary-red);color:white;padding:10px 12px;border-radius:12px;font-size:13px;max-width:88%;align-self:flex-end;word-break:break-word;white-space:pre-wrap;"
+                : "background:var(--primary-blue-light);padding:10px 12px;border-radius:12px;font-size:13px;color:var(--dark-black);max-width:88%;align-self:flex-start;border:1px solid #BFDBFE;white-space:pre-wrap;";
+            bubble.textContent = message;
+            chatContainer.appendChild(bubble);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return bubble;
+        }
+
         function sendAIChatPrompt(txt) {
             document.getElementById('ai-chat-input').value = txt;
             sendUserAIChat();
         }
 
-        function sendUserAIChat() {
+        async function sendUserAIChat() {
             const inputEl = document.getElementById('ai-chat-input');
             const query = inputEl.value.trim();
             if (!query) return;
 
-            const chatContainer = document.getElementById('ai-chat-messages');
-            chatContainer.innerHTML += `
-                <div style="background:var(--primary-red); color:white; padding:10px 12px; border-radius:12px; font-size:13px; max-width:88%; align-self:flex-end; word-break:break-word;">
-                    ${query}
-                </div>
-            `;
             inputEl.value = '';
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            appendAIChatMessage(query, true);
+            const loadingBubble = appendAIChatMessage("HY STORE AI soch raha hai...", false);
 
-            setTimeout(() => {
-                let reply = "Welcome to HY STORE! Explore custom magic mugs, acrylic LED frames, and wholesale ordering through our app.";
-                const qLower = query.toLowerCase();
-                if (qLower.includes('mug') || qLower.includes('magic')) {
-                    reply = "Magic Photo Mugs are available for PKR 1,150. Select Design Your Mug on the Home page to personalize your mug.";
-                } else if (qLower.includes('shipping') || qLower.includes('delivery')) {
-                    reply = "We offer FREE shipping on your first order, with careful packaging for safe delivery.";
-                } else if (qLower.includes('track') || qLower.includes('order')) {
-                    reply = "You can check your order status and tracking ID in the Profile tab.";
-                } else if (qLower.includes('price') || qLower.includes('cost')) {
-                    reply = "Mugs start from PKR 790, and LED Frames start from PKR 2,450.";
+            try {
+                const result = await callBackendAPI({
+                    action: "geminiChat",
+                    prompt: query,
+                    history: hyAIHistory.slice(-10)
+                });
+
+                loadingBubble.remove();
+                if (!result || result.status !== "success" || !result.reply) {
+                    appendAIChatMessage((result && result.message) || "AI se rabta nahi ho saka. Thori dair baad dobara try karein.", false);
+                    return;
                 }
 
-                chatContainer.innerHTML += `
-                    <div style="background:var(--primary-blue-light); padding:10px 12px; border-radius:12px; font-size:13px; color:var(--dark-black); max-width:88%; align-self:flex-start; border:1px solid #BFDBFE;">
-                        ${reply}
-                    </div>
-                `;
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }, 600);
+                hyAIHistory.push(
+                    { role: "user", text: query },
+                    { role: "model", text: result.reply }
+                );
+                hyAIHistory = hyAIHistory.slice(-10);
+                appendAIChatMessage(result.reply, false);
+            } catch (error) {
+                loadingBubble.remove();
+                console.error("Gemini chat error:", error);
+                appendAIChatMessage("AI assistant mein masla aya. Dobara try karein.", false);
+            }
         }
 
         function toggleSave(id) {
